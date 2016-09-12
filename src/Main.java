@@ -1,10 +1,11 @@
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, HttpResponseException {
 
-        UWaterloo wat = new UWaterloo("");
+        UWaterlooClient client = new UWaterlooClient("zdfg");
 
     }
 
