@@ -26,7 +26,6 @@ public class UWaterlooClient {
     private static boolean validKey(String key) throws IOException, HttpResponseException {
 
         String url = BASE_URL + "codes/units.json?key=" + key;
-        System.out.println(url);
         URL website = new URL(url);
 
         HttpURLConnection conn = (HttpURLConnection)website.openConnection();
@@ -82,6 +81,33 @@ public class UWaterlooClient {
     }
 
 
+    private JSONObject getJson(String endpoint) throws IOException, HttpResponseException {
+
+        String url = BASE_URL + endpoint + ".json" + keyString;
+
+        URL site = new URL(url);
+
+        HttpURLConnection conn = (HttpURLConnection)site.openConnection();
+        conn.setRequestMethod("GET");
+
+        conn.connect();
+
+        int responseCode = conn.getResponseCode();
+
+        if(responseCode != 200) {
+            throw new HttpResponseException(responseCode, conn.getErrorStream());
+        }
+
+        String rawtext = getResponse(site.openStream());
+
+        //System.out.println(rawtext);
+
+        return new JSONObject(rawtext);
+
+
+    }
+
+
 
     public ArrayList<Unit> getUnits() throws IOException, HttpResponseException {
 
@@ -124,6 +150,27 @@ public class UWaterlooClient {
         return units;
 
     }
+
+    public ArrayList<Term> getTerms() throws IOException, HttpResponseException {
+
+        JSONArray jsonTerms = getJson("codes/terms").getJSONArray("data");
+
+        ArrayList<Term> terms = new ArrayList<>();
+
+        for(int i = 0; i < jsonTerms.length(); i++) {
+
+            JSONObject jsonTerm = jsonTerms.getJSONObject(i);
+
+            terms.add(new Term(jsonTerm.getString("abbreviation"), jsonTerm.getString("description")));
+
+        }
+
+        return terms;
+
+    }
+
+
+
 }
 
 
@@ -185,4 +232,17 @@ class Unit {
         this.unitShortName = unit_short_name;
         this.unitFullName = unit_full_name;
     }
+}
+
+class Term {
+    public String abbreviation;
+    public String description;
+
+    public Term(String abbreviation, String description){
+        this.abbreviation = abbreviation;
+        this.description = description;
+    }
+
+
+
 }
