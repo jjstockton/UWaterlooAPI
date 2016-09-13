@@ -1,11 +1,19 @@
 import javax.naming.AuthenticationException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) throws IOException, HttpResponseException {
 
-        UWaterlooClient client = new UWaterlooClient("abf875e0dcd95bc93484f9437934fc6e");
+        UWaterlooClient client = new UWaterlooClient("");
+
+        ArrayList<Unit> units = client.getUnits();
+
+        for(Unit unit : units){
+            System.out.println(unit.unitCode + " is short for " + unit.unitFullName);
+        }
+
 
     }
 
