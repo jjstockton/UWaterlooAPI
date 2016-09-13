@@ -4,6 +4,7 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.json.*;
 
 public class UWaterlooClient {
@@ -17,13 +18,13 @@ public class UWaterlooClient {
     //}
 
     public UWaterlooClient(String key) throws IOException, HttpResponseException {
-        if(validKey(key)){
+        if(isValidKey(key)){
             this.apiKey = key;
             this.keyString = "?key=" + key;
         }
     }
 
-    private static boolean validKey(String key) throws IOException, HttpResponseException {
+    private static boolean isValidKey(String key) throws IOException, HttpResponseException {
 
         String url = BASE_URL + "codes/units.json?key=" + key;
         URL website = new URL(url);
@@ -170,6 +171,26 @@ public class UWaterlooClient {
     }
 
 
+    public ArrayList<Course> getCourses(int term) throws IOException, HttpResponseException {
+
+        JSONArray jsonCourses = getJson("terms/" + term + "/courses").getJSONArray("data");
+
+        ArrayList<Course> courses = new ArrayList<>();
+
+        for(int i = 0; i < jsonCourses.length(); i++) {
+
+            JSONObject jsonCourse = jsonCourses.getJSONObject(i);
+
+            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getInt("catalog_number"), jsonCourse.getDouble("units"), jsonCourse.getString("title")));
+
+        }
+
+        return courses;
+
+
+    }
+
+
 
 }
 
@@ -241,6 +262,26 @@ class Term {
     public Term(String abbreviation, String description){
         this.abbreviation = abbreviation;
         this.description = description;
+    }
+
+
+
+}
+
+class Course {
+
+    public String subject;
+    public int number;
+    public double units;
+    public String name;
+
+    public Course(String subject, int number, double units, String name){
+
+        this.subject = subject;
+        this.number = number;
+        this.units = units;
+        this.name = name;
+
     }
 
 
