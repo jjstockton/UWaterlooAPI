@@ -13,34 +13,36 @@ public class UWaterlooClient {
     //}
 
     public UWaterlooClient(String key) throws IOException, HttpResponseException {
-        authenticate(key);
+        if(validKey(key)){
+            this.apikey = key;
+        }
     }
 
-    private static void authenticate(String key) throws IOException, HttpResponseException {
+    private static boolean validKey(String key) throws IOException, HttpResponseException {
 
         String url = "https://api.uwaterloo.ca/v2/api/usage.json?key=" + key;
-
-        //url = "https://api.uwaterloo.ca/v2/courses/C/135/schedule.json?key=abf875e0dcd95bc93484f9437934fc6e";
-
         URL website = new URL(url);
-        //URLConnection conn = website.openConnection();
 
         HttpURLConnection conn = (HttpURLConnection)website.openConnection();
 
-
-
         conn.setRequestMethod("GET");
         conn.connect();
+
         int responseCode = conn.getResponseCode();
 
-        System.out.println(responseCode);
-
         if(responseCode != 200) {
-
             throw new HttpResponseException(responseCode, conn.getErrorStream());
-
         }
 
+        //This is necessary because the API sometimes returns a response code that is not correct
+        int metaResponseCode = getResponseCode(conn.getInputStream());
+        if(metaResponseCode != 200){
+            throw new HttpResponseException(metaResponseCode, website.openStream());
+        }
+
+        conn.disconnect();
+
+        return true;
 
     }
 
@@ -56,8 +58,18 @@ public class UWaterlooClient {
         JSONObject obj = new JSONObject(text);
 
         return obj.getJSONObject("meta").getInt("status");
+    }
 
+    public static void printResponse(InputStream input) throws IOException {
 
+        BufferedReader br = new BufferedReader(new InputStreamReader(input));
+        String line;
+        System.out.println("Response:");
+        while((line = br.readLine()) != null){
+            System.out.println(line);
+        }
+
+        System.out.println("end");
     }
 }
 
