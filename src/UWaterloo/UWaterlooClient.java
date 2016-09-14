@@ -1,11 +1,12 @@
+package UWaterloo;
 
-import javax.naming.AuthenticationException;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.json.*;
+
+import static UWaterloo.JsonUtils.*;
 
 public class UWaterlooClient {
 
@@ -13,9 +14,6 @@ public class UWaterlooClient {
     private static String BASE_URL = "https://api.uwaterloo.ca/v2/";
     private String keyString;
 
-    //public UWaterlooClient() throws UnauthorizedException {
-    //    throw new UnauthorizedException("API key is required.");
-    //}
 
     public UWaterlooClient(String key) {
         if(isValidKey(key)){
@@ -79,91 +77,18 @@ public class UWaterlooClient {
         return text;
     }
 
-    private JSONObject getJson(String endpoint) {
-
-        String url = BASE_URL + endpoint + ".json" + keyString;
-
-        JSONObject json = null;
-
-        try {
-
-            URL site = new URL(url);
-
-            HttpURLConnection conn = (HttpURLConnection) site.openConnection();
-            conn.setRequestMethod("GET");
-
-            conn.connect();
-
-            int responseCode = conn.getResponseCode();
-
-
-            if (responseCode != 200) {
-                throw new HttpResponseException(responseCode, conn.getErrorStream());
-            }
-
-
-            json = getJson(site.openStream());
-            int metaResponseCode = json.getJSONObject("meta").getInt("status");
-            if(metaResponseCode != 200){
-                throw new HttpResponseException(metaResponseCode, site.openStream());
-            }
-
-            conn.disconnect();
-        } catch(IOException e ){
-
-        }
-
-
-        return json;
-
-    }
-
-
-    protected static JSONObject getJson(InputStream input){
-
-        String jsonString = "";
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(input));
-            //String text = "";
-            String line;
-            while ((line = br.readLine()) != null) {
-                jsonString += line;
-            }
-        }catch(IOException e){
-            System.err.println(e);
-        }
-
-        return new JSONObject(jsonString);
-
-    }
 
 
 
-    public ArrayList<Unit> getUnits() throws IOException, HttpResponseException {
-
-        String url = BASE_URL + "codes/units.json" + keyString;
-        URL website = new URL(url);
-
-        HttpURLConnection conn = (HttpURLConnection)website.openConnection();
-
-        conn.setRequestMethod("GET");
-        conn.connect();
-
-        int responseCode = conn.getResponseCode();
-
-        if(responseCode != 200) {
-            throw new HttpResponseException(responseCode, conn.getErrorStream());
-        }
-
-        String rawtext = getResponse(website.openStream());
-
-        System.out.println(rawtext);
-
-        JSONObject obj = new JSONObject(rawtext);
-
-        JSONArray jsonUnits = obj.getJSONArray("data");
 
 
+
+    public ArrayList<Unit> getUnits() {
+
+        String endpoint = "codes/units";
+        String url = BASE_URL + endpoint +".json" + keyString;
+
+        JSONArray jsonUnits = getJson(url).getJSONArray("data");
 
         ArrayList<Unit> units = new ArrayList<>();
 
@@ -175,15 +100,16 @@ public class UWaterlooClient {
 
         }
 
-
-
         return units;
 
     }
 
     public ArrayList<Term> getTerms() throws IOException, HttpResponseException {
 
-        JSONArray jsonTerms = getJson("codes/terms").getJSONArray("data");
+        String endpoint = "codes/terms";
+        String url = BASE_URL + endpoint +".json" + keyString;
+
+        JSONArray jsonTerms = getJson(url).getJSONArray("data");
 
         ArrayList<Term> terms = new ArrayList<>();
 
@@ -202,7 +128,10 @@ public class UWaterlooClient {
 
     public ArrayList<Course> getCourses(int term){
 
-        JSONArray jsonCourses = getJson("terms/" + term + "/courses").getJSONArray("data");
+        String endpoint = "terms/" + term + "/courses";
+        String url = BASE_URL + endpoint +".json" + keyString;
+
+        JSONArray jsonCourses = getJson(url).getJSONArray("data");
 
         ArrayList<Course> courses = new ArrayList<>();
 
@@ -219,7 +148,27 @@ public class UWaterlooClient {
 
     }
 
+    public ArrayList<Course> getCourses(){
 
+        String endpoint = "courses";
+        String url = BASE_URL + endpoint +".json" + keyString;
+
+        JSONArray jsonCourses = getJson(url).getJSONArray("data");
+
+        ArrayList<Course> courses = new ArrayList<>();
+
+        for(int i = 0; i < jsonCourses.length(); i++) {
+
+            JSONObject jsonCourse = jsonCourses.getJSONObject(i);
+
+            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getString("catalog_number"), jsonCourse.getString("title"), jsonCourse.getInt("course_id")));
+
+        }
+
+        return courses;
+
+
+    }
 
 }
 
@@ -248,7 +197,7 @@ class HttpResponseException extends RuntimeException {
                 errorMessage = "API Key is required.";
                 break;
             default:
-                JSONObject obj = UWaterlooClient.getJson(errorStream);
+                JSONObject obj = getJson(errorStream);
                 errorMessage = obj.getJSONObject("meta").getString("message");
         }
 
@@ -259,51 +208,3 @@ class HttpResponseException extends RuntimeException {
 
 }
 
-class Unit {
-
-    public String unitCode;
-    public String groupCode;
-    public String unitShortName;
-    public String unitFullName;
-
-    public Unit(String unit_code, String group_code, String unit_short_name, String unit_full_name) {
-
-        this.unitCode = unit_code;
-        this.groupCode = group_code;
-        this.unitShortName = unit_short_name;
-        this.unitFullName = unit_full_name;
-    }
-}
-
-class Term {
-    public String abbreviation;
-    public String description;
-
-    public Term(String abbreviation, String description){
-        this.abbreviation = abbreviation;
-        this.description = description;
-    }
-
-
-
-}
-
-class Course {
-
-    public String subject;
-    public String number;
-    public double units;
-    public String name;
-
-    public Course(String subject, String number, double units, String name){
-
-        this.subject = subject;
-        this.number = number;
-        this.units = units;
-        this.name = name;
-
-    }
-
-
-
-}
