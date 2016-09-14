@@ -17,36 +17,34 @@ public class UWaterlooClient {
     //    throw new UnauthorizedException("API key is required.");
     //}
 
-    public UWaterlooClient(String key) throws IOException, HttpResponseException {
+    public UWaterlooClient(String key) {
         if(isValidKey(key)){
             this.apiKey = key;
             this.keyString = "?key=" + key;
         }
     }
 
-    private static boolean isValidKey(String key) throws IOException, HttpResponseException {
+    private static boolean isValidKey(String key) {
 
         String url = BASE_URL + "codes/units.json?key=" + key;
-        URL website = new URL(url);
 
-        HttpURLConnection conn = (HttpURLConnection)website.openConnection();
+        try {
+            URL website = new URL(url);
 
-        conn.setRequestMethod("GET");
-        conn.connect();
+            HttpURLConnection conn = (HttpURLConnection) website.openConnection();
 
-        int responseCode = conn.getResponseCode();
+            conn.setRequestMethod("GET");
+            conn.connect();
 
-        if(responseCode != 200) {
-            throw new HttpResponseException(responseCode, conn.getErrorStream());
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                throw new HttpResponseException(responseCode, conn.getErrorStream());
+            }
+
+            conn.disconnect();
+        }catch(IOException e){
+            System.err.println(e);
         }
-
-        //This is necessary because the API sometimes returns a response code that is not correct
-        int metaResponseCode = getResponseCode(conn.getInputStream());
-        if(metaResponseCode != 200){
-            throw new HttpResponseException(metaResponseCode, website.openStream());
-        }
-
-        conn.disconnect();
 
         return true;
 
@@ -81,30 +79,61 @@ public class UWaterlooClient {
         return text;
     }
 
-
-    private JSONObject getJson(String endpoint) throws IOException, HttpResponseException {
+    private JSONObject getJson(String endpoint) {
 
         String url = BASE_URL + endpoint + ".json" + keyString;
 
-        URL site = new URL(url);
+        JSONObject json = null;
 
-        HttpURLConnection conn = (HttpURLConnection)site.openConnection();
-        conn.setRequestMethod("GET");
+        try {
 
-        conn.connect();
+            URL site = new URL(url);
 
-        int responseCode = conn.getResponseCode();
+            HttpURLConnection conn = (HttpURLConnection) site.openConnection();
+            conn.setRequestMethod("GET");
 
-        if(responseCode != 200) {
-            throw new HttpResponseException(responseCode, conn.getErrorStream());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+
+
+            if (responseCode != 200) {
+                throw new HttpResponseException(responseCode, conn.getErrorStream());
+            }
+
+
+            json = getJson(site.openStream());
+            int metaResponseCode = json.getJSONObject("meta").getInt("status");
+            if(metaResponseCode != 200){
+                throw new HttpResponseException(metaResponseCode, site.openStream());
+            }
+
+            conn.disconnect();
+        } catch(IOException e ){
+
         }
 
-        String rawtext = getResponse(site.openStream());
 
-        //System.out.println(rawtext);
+        return json;
 
-        return new JSONObject(rawtext);
+    }
 
+
+    protected static JSONObject getJson(InputStream input){
+
+        String jsonString = "";
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(input));
+            //String text = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                jsonString += line;
+            }
+        }catch(IOException e){
+            System.err.println(e);
+        }
+
+        return new JSONObject(jsonString);
 
     }
 
@@ -171,7 +200,7 @@ public class UWaterlooClient {
     }
 
 
-    public ArrayList<Course> getCourses(int term) throws IOException, HttpResponseException {
+    public ArrayList<Course> getCourses(int term){
 
         JSONArray jsonCourses = getJson("terms/" + term + "/courses").getJSONArray("data");
 
@@ -181,7 +210,7 @@ public class UWaterlooClient {
 
             JSONObject jsonCourse = jsonCourses.getJSONObject(i);
 
-            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getInt("catalog_number"), jsonCourse.getDouble("units"), jsonCourse.getString("title")));
+            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getString("catalog_number"), jsonCourse.getDouble("units"), jsonCourse.getString("title")));
 
         }
 
@@ -195,7 +224,7 @@ public class UWaterlooClient {
 }
 
 
-class HttpResponseException extends Exception {
+class HttpResponseException extends RuntimeException {
 
     public HttpResponseException() { super(); }
     public HttpResponseException(String message) { super(message); }
@@ -203,11 +232,11 @@ class HttpResponseException extends Exception {
     public HttpResponseException(Throwable cause) { super(cause); }
 
 
-    public HttpResponseException(int responseCode, InputStream errorStream) throws IOException, HttpResponseException {
+    public HttpResponseException(int responseCode, InputStream errorStream) {
         this(getErrorMessage(responseCode, errorStream));
     }
 
-    private static String getErrorMessage(int responseCode, InputStream errorStream) throws IOException {
+    private static String getErrorMessage(int responseCode, InputStream errorStream) {
 
         String errorMessage ;
 
@@ -219,16 +248,7 @@ class HttpResponseException extends Exception {
                 errorMessage = "API Key is required.";
                 break;
             default:
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(errorStream));
-                String text= "";
-                String line;
-                while((line = br.readLine()) != null){
-                    text += line;
-                }
-
-                JSONObject obj = new JSONObject(text);
-
+                JSONObject obj = UWaterlooClient.getJson(errorStream);
                 errorMessage = obj.getJSONObject("meta").getString("message");
         }
 
@@ -271,11 +291,11 @@ class Term {
 class Course {
 
     public String subject;
-    public int number;
+    public String number;
     public double units;
     public String name;
 
-    public Course(String subject, int number, double units, String name){
+    public Course(String subject, String number, double units, String name){
 
         this.subject = subject;
         this.number = number;
