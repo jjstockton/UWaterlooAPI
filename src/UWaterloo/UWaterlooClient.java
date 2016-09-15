@@ -78,11 +78,6 @@ public class UWaterlooClient {
     }
 
 
-
-
-
-
-
     public ArrayList<Unit> getUnits() {
 
         String endpoint = "codes/units";
@@ -104,7 +99,7 @@ public class UWaterlooClient {
 
     }
 
-    public ArrayList<Term> getTerms() throws IOException, HttpResponseException {
+    public ArrayList<Term> getTerms() {
 
         String endpoint = "codes/terms";
         String url = BASE_URL + endpoint +".json" + keyString;
@@ -161,15 +156,25 @@ public class UWaterlooClient {
 
             JSONObject jsonCourse = jsonCourses.getJSONObject(i);
 
-            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getString("catalog_number"), jsonCourse.getString("title"), jsonCourse.getInt("course_id")));
+            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getString("catalog_number"), jsonCourse.getString("title"), jsonCourse.getString("course_id")));
 
         }
 
         return courses;
-
-
     }
 
+    public Course getCourse(String subject, String catalogNumber){
+
+        String endpoint = "courses/" + subject + "/" + catalogNumber;
+        String url = BASE_URL + endpoint + ".json" + keyString;
+
+        JSONObject course = getJson(url).getJSONObject("data");
+
+        Deserializer d = new Deserializer(course, Course.class);
+
+        return d.course;
+
+    }
 }
 
 
