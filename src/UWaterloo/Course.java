@@ -32,9 +32,7 @@ public class Course {
     private boolean conradGrebelOnly;
 
 
-    protected Course() {
-
-    }
+    protected Course() {}
 
     protected Course(String subject, String number, double units, String name) {
         this.subject = subject;
@@ -88,6 +86,10 @@ public class Course {
 
     protected void setUnits(Double units) {
         this.units = units;
+    }
+
+    protected void setUnits(Integer units) {
+        this.units = (double) units;
     }
 
     public String getDescription() {

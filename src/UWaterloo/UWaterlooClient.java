@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 import org.json.*;
+import sun.security.krb5.internal.crypto.Des;
 
 import static UWaterloo.JsonUtils.*;
 
@@ -41,7 +42,7 @@ public class UWaterlooClient {
 
             conn.disconnect();
         }catch(IOException e){
-            System.err.println(e);
+            e.printStackTrace();
         }
 
         return true;
@@ -80,6 +81,8 @@ public class UWaterlooClient {
 
     public ArrayList<Unit> getUnits() {
 
+        Deserializer d = new Deserializer(Unit.class);
+
         String endpoint = "codes/units";
         String url = BASE_URL + endpoint +".json" + keyString;
 
@@ -91,7 +94,7 @@ public class UWaterlooClient {
 
             JSONObject jsonUnit = jsonUnits.getJSONObject(i);
 
-            units.add(new Unit(jsonUnit.getString("unit_code"), jsonUnit.getString("group_code"), jsonUnit.getString("unit_short_name"), jsonUnit.getString("unit_full_name")));
+            units.add((Unit) d.deserialize(jsonUnit));
 
         }
 
@@ -100,6 +103,8 @@ public class UWaterlooClient {
     }
 
     public ArrayList<Term> getTerms() {
+
+        Deserializer d = new Deserializer(Term.class);
 
         String endpoint = "codes/terms";
         String url = BASE_URL + endpoint +".json" + keyString;
@@ -112,7 +117,7 @@ public class UWaterlooClient {
 
             JSONObject jsonTerm = jsonTerms.getJSONObject(i);
 
-            terms.add(new Term(jsonTerm.getString("abbreviation"), jsonTerm.getString("description")));
+            terms.add((Term) d.deserialize(jsonTerm));
 
         }
 
@@ -122,6 +127,8 @@ public class UWaterlooClient {
 
 
     public ArrayList<Course> getCourses(int term){
+
+        Deserializer d = new Deserializer(Course.class);
 
         String endpoint = "terms/" + term + "/courses";
         String url = BASE_URL + endpoint +".json" + keyString;
@@ -134,7 +141,7 @@ public class UWaterlooClient {
 
             JSONObject jsonCourse = jsonCourses.getJSONObject(i);
 
-            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getString("catalog_number"), jsonCourse.getDouble("units"), jsonCourse.getString("title")));
+            courses.add((Course) d.deserialize(jsonCourse));
 
         }
 
@@ -144,6 +151,8 @@ public class UWaterlooClient {
     }
 
     public ArrayList<Course> getCourses(){
+
+        Deserializer d = new Deserializer(Course.class);
 
         String endpoint = "courses";
         String url = BASE_URL + endpoint +".json" + keyString;
@@ -156,7 +165,7 @@ public class UWaterlooClient {
 
             JSONObject jsonCourse = jsonCourses.getJSONObject(i);
 
-            courses.add(new Course(jsonCourse.getString("subject"), jsonCourse.getString("catalog_number"), jsonCourse.getString("title"), jsonCourse.getString("course_id")));
+            courses.add((Course) d.deserialize(jsonCourse));
 
         }
 
@@ -170,9 +179,9 @@ public class UWaterlooClient {
 
         JSONObject course = getJson(url).getJSONObject("data");
 
-        Deserializer d = new Deserializer(course, Course.class);
+        Deserializer d = new Deserializer(Course.class);
 
-        return d.course;
+        return (Course) d.deserialize(course);
 
     }
 }
@@ -181,12 +190,12 @@ public class UWaterlooClient {
 class HttpResponseException extends RuntimeException {
 
     public HttpResponseException() { super(); }
-    public HttpResponseException(String message) { super(message); }
+    private HttpResponseException(String message) { super(message); }
     public HttpResponseException(String message, Throwable cause) { super(message, cause); }
     public HttpResponseException(Throwable cause) { super(cause); }
 
 
-    public HttpResponseException(int responseCode, InputStream errorStream) {
+     HttpResponseException(int responseCode, InputStream errorStream) {
         this(getErrorMessage(responseCode, errorStream));
     }
 

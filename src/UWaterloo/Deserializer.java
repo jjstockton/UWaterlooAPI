@@ -3,65 +3,58 @@ package UWaterloo;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Iterator;
 
-public class Deserializer {
+class Deserializer {
 
-    public Course course;
-
-
-    public Deserializer(JSONObject json, Class c) {
-
-        this.course = new Course();
-
-        JSONObject data = json;
-
-        //Iterator keys = data.keys();
-
-        ArrayList<String> keys = new ArrayList<>();
-        data.keys().forEachRemaining(keys::add);
+    private  Class c;
 
 
-        for(String key : keys){
-            try {
+     Deserializer(Class c) {
+        this.c = c;
+    }
 
-                Object value = data.get(key);
-                Class type = value.getClass();
+
+     Object deserialize(JSONObject json) {
+
+        Object newObject = null;
+
+        try {
+
+            newObject = c.newInstance();
+
+            Iterator keys = json.keys();
+
+            while(keys.hasNext()){
+
+                String key = (String)keys.next();
+                Object value = json.get(key);
 
                 String camelCaseKey = JsonUtils.toCamelCase(key);
 
                 String setterMethod = getSetterMethod(camelCaseKey);
 
-                if(type == JSONArray.class){
+
+
+                if(value instanceof JSONArray){
                     value = JsonUtils.toStringArray((JSONArray) value);
-                    type = String[].class;
-                }
-
-
-                if(type == JSONObject.class || type == JSONObject.NULL.getClass()){
-                    System.out.println(key + " " + type);
+                }else if(value instanceof JSONObject || value == JSONObject.NULL){
                     continue;
                 }
 
-                Method setter = c.getDeclaredMethod(setterMethod, type);
+                Method setter = c.getDeclaredMethod(setterMethod, value.getClass());
 
-                //System.out.println(data.get(key).getClass());
+                setter.invoke(newObject, value);
 
-
-                setter.invoke(course, value);
-
-
-            }catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
-                e.printStackTrace();
             }
 
+        }catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e){
+            e.printStackTrace();
         }
 
-
-
+        return newObject;
 
     }
 
