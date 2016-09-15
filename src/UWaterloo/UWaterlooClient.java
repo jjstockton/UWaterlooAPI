@@ -5,7 +5,6 @@ import java.io.*;
 import java.util.ArrayList;
 
 import org.json.*;
-import sun.security.krb5.internal.crypto.Des;
 
 import static UWaterloo.JsonUtils.*;
 
@@ -83,8 +82,7 @@ public class UWaterlooClient {
 
         Deserializer d = new Deserializer(Unit.class);
 
-        String endpoint = "codes/units";
-        String url = BASE_URL + endpoint +".json" + keyString;
+        String url = buildUrl("codes", "units");
 
         JSONArray jsonUnits = getJson(url).getJSONArray("data");
 
@@ -106,8 +104,7 @@ public class UWaterlooClient {
 
         Deserializer d = new Deserializer(Term.class);
 
-        String endpoint = "codes/terms";
-        String url = BASE_URL + endpoint +".json" + keyString;
+        String url = buildUrl("codes", "terms");
 
         JSONArray jsonTerms = getJson(url).getJSONArray("data");
 
@@ -130,8 +127,7 @@ public class UWaterlooClient {
 
         Deserializer d = new Deserializer(Course.class);
 
-        String endpoint = "terms/" + term + "/courses";
-        String url = BASE_URL + endpoint +".json" + keyString;
+        String url = buildUrl("terms", String.valueOf(term), "courses");
 
         JSONArray jsonCourses = getJson(url).getJSONArray("data");
 
@@ -147,15 +143,13 @@ public class UWaterlooClient {
 
         return courses;
 
-
     }
 
     public ArrayList<Course> getCourses(){
 
         Deserializer d = new Deserializer(Course.class);
 
-        String endpoint = "courses";
-        String url = BASE_URL + endpoint +".json" + keyString;
+        String url = buildUrl("courses");
 
         JSONArray jsonCourses = getJson(url).getJSONArray("data");
 
@@ -174,8 +168,7 @@ public class UWaterlooClient {
 
     public Course getCourse(String subject, String catalogNumber){
 
-        String endpoint = "courses/" + subject + "/" + catalogNumber;
-        String url = BASE_URL + endpoint + ".json" + keyString;
+        String url = buildUrl("courses", subject, catalogNumber);
 
         JSONObject course = getJson(url).getJSONObject("data");
 
@@ -184,6 +177,17 @@ public class UWaterlooClient {
         return (Course) d.deserialize(course);
 
     }
+
+    private String buildUrl(String... params){
+
+        String url = BASE_URL;
+
+        url = url + String.join("/", params) + ".json?key=" + apiKey;
+
+        return url;
+
+    }
+
 }
 
 

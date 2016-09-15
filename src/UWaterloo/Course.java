@@ -15,7 +15,7 @@ public class Course {
     private String crosslistings;
     private String[] termsOffered;
     private String notes;
-    private Offering offerings;
+    private Offerings offerings;
     private boolean needsDepartmentConsent;
     private boolean needsInstructorConsent;
     private String[] extra;
@@ -30,6 +30,8 @@ public class Course {
     private boolean renisonOnly;
     private boolean conradGrebel;
     private boolean conradGrebelOnly;
+
+    //private Offerings offerings;
 
 
     protected Course() {}
@@ -168,11 +170,11 @@ public class Course {
         this.antirequisites = antirequisites;
     }
 
-    public Offering getOfferings() {
+    public Offerings getOfferings() {
         return offerings;
     }
 
-    public void setOfferings(Offering offerings) {
+    public void setOfferings(Offerings offerings) {
         this.offerings = offerings;
     }
 
@@ -277,6 +279,3 @@ public class Course {
     }
 }
 
-class Offering {
-
-}

@@ -36,12 +36,13 @@ class Deserializer {
 
                 String setterMethod = getSetterMethod(camelCaseKey);
 
-
-
                 if(value instanceof JSONArray){
                     value = JsonUtils.toStringArray((JSONArray) value);
-                }else if(value instanceof JSONObject || value == JSONObject.NULL){
+                }else if(value == JSONObject.NULL){
                     continue;
+                }else if(value instanceof JSONObject){
+                    Deserializer d = new Deserializer(Class.forName("UWaterloo." + key.substring(0, 1).toUpperCase() + key.substring(1)));
+                    value = d.deserialize(((JSONObject) value));
                 }
 
                 Method setter = c.getDeclaredMethod(setterMethod, value.getClass());
@@ -50,7 +51,7 @@ class Deserializer {
 
             }
 
-        }catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e){
+        }catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | ClassNotFoundException e){
             e.printStackTrace();
         }
 
