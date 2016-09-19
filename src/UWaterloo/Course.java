@@ -22,17 +22,6 @@ public class Course {
     private String calendarYear;
     private String url;
     private String academicLevel;
-    private boolean online;
-    private boolean onlineOnly;
-    private boolean stJerome;
-    private boolean stJeromeOnly;
-    private boolean renison;
-    private boolean renisonOnly;
-    private boolean conradGrebel;
-    private boolean conradGrebelOnly;
-
-    //private Offerings offerings;
-
 
     protected Course() {}
 
@@ -214,68 +203,84 @@ public class Course {
         this.academicLevel = academicLevel;
     }
 
-    public boolean isOnline() {
-        return online;
-    }
 
-    public void setOnline(boolean online) {
-        this.online = online;
-    }
+    public class Offerings {
 
-    public boolean isOnlineOnly() {
-        return onlineOnly;
-    }
+        private boolean online;
+        private boolean onlineOnly;
+        private boolean stJerome;
+        private boolean stJeromeOnly;
+        private boolean renison;
+        private boolean renisonOnly;
+        private boolean conradGrebel;
+        private boolean conradGrebelOnly;
 
-    public void setOnlineOnly(boolean onlineOnly) {
-        this.onlineOnly = onlineOnly;
-    }
+        Offerings() {}
 
-    public boolean isStJerome() {
-        return stJerome;
-    }
+        public boolean isOnline() {
+            return online;
+        }
 
-    public void setStJerome(boolean stJerome) {
-        this.stJerome = stJerome;
-    }
+        protected void setOnline(Boolean online) {
+            this.online = online;
+        }
 
-    public boolean isStJeromeOnly() {
-        return stJeromeOnly;
-    }
+        public boolean isOnlineOnly() {
+            return onlineOnly;
+        }
 
-    public void setStJeromeOnly(boolean stJeromeOnly) {
-        this.stJeromeOnly = stJeromeOnly;
-    }
+        protected void setOnlineOnly(Boolean onlineOnly) {
+            this.onlineOnly = onlineOnly;
+        }
 
-    public boolean isRenison() {
-        return renison;
-    }
+        public boolean isStJerome() {
+            return stJerome;
+        }
 
-    public void setRenison(boolean renison) {
-        this.renison = renison;
-    }
+        protected void setStJerome(Boolean stJerome) {
+            this.stJerome = stJerome;
+        }
 
-    public boolean isRenisonOnly() {
-        return renisonOnly;
-    }
+        public boolean isStJeromeOnly() {
+            return stJeromeOnly;
+        }
 
-    public void setRenisonOnly(boolean renisonOnly) {
-        this.renisonOnly = renisonOnly;
-    }
+        protected void setStJeromeOnly(Boolean stJeromeOnly) {
+            this.stJeromeOnly = stJeromeOnly;
+        }
 
-    public boolean isConradGrebel() {
-        return conradGrebel;
-    }
+        public boolean isRenison() {
+            return renison;
+        }
 
-    public void setConradGrebel(boolean conradGrebel) {
-        this.conradGrebel = conradGrebel;
-    }
+        protected void setRenison(Boolean renison) {
+            this.renison = renison;
+        }
 
-    public boolean isConradGrebelOnly() {
-        return conradGrebelOnly;
-    }
+        public boolean isRenisonOnly() {
+            return renisonOnly;
+        }
 
-    public void setConradGrebelOnly(boolean conradGrebelOnly) {
-        this.conradGrebelOnly = conradGrebelOnly;
+        protected void setRenisonOnly(Boolean renisonOnly) {
+            this.renisonOnly = renisonOnly;
+        }
+
+        public boolean isConradGrebel() {
+            return conradGrebel;
+        }
+
+        protected void setConradGrebel(Boolean conradGrebel) {
+            this.conradGrebel = conradGrebel;
+        }
+
+        public boolean isConradGrebelOnly() {
+            return conradGrebelOnly;
+        }
+
+        protected void setConradGrebelOnly(Boolean conradGrebelOnly) {
+            this.conradGrebelOnly = conradGrebelOnly;
+        }
+
     }
 }
 
