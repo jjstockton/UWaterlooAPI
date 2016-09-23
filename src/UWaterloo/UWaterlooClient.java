@@ -178,6 +178,20 @@ public class UWaterlooClient {
 
     }
 
+    public ArrayList<Schedule> getSchedules(String subject, String catalogNumber) {
+        Deserializer d = new Deserializer(Schedule.class);
+        String url = buildUrl("courses", subject, catalogNumber, "schedule");
+        JSONArray jsonSchedules = getJson(url).getJSONArray("data");
+        ArrayList<Schedule> schedules = new ArrayList<>();
+
+        for(int i = 0; i < jsonSchedules.length(); i++) {
+            JSONObject jsonSchedule = jsonSchedules.getJSONObject(i);
+            schedules.add((Schedule) d.deserialize(jsonSchedule));
+        }
+
+        return schedules;
+    }
+
     private String buildUrl(String... params){
 
         String url = BASE_URL;

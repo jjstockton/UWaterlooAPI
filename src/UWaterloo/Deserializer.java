@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Iterator;
 
 class Deserializer {
@@ -39,7 +40,6 @@ class Deserializer {
 class ObjectDeserializer extends Deserializer {
 
     private Object instance;
-    private JSONObject json;
 
     public ObjectDeserializer(Object inst) {
         super(inst.getClass());
@@ -53,16 +53,49 @@ class ObjectDeserializer extends Deserializer {
             Iterator keys = json.keys();
 
             while(keys.hasNext()){
-
                 String key = (String)keys.next();
                 Object value = json.get(key);
 
                 String camelCaseKey = JsonUtils.toCamelCase(key);
-
                 String setterMethod = Deserializer.getSetterMethod(camelCaseKey);
 
-                if(value instanceof JSONArray){
-                    value = JsonUtils.toStringArray((JSONArray) value);
+                Class keyClass;
+
+                try {
+                    Class<?> innerClass = Class.forName(this.c.getName() + "$" + key.substring(0, 1).toUpperCase() + key.substring(1));
+                    if(value instanceof JSONArray) {
+                        keyClass = (Class) Class.forName("[L" + innerClass.getName() + ";");
+                    }else {
+                        keyClass = innerClass;
+                    }
+                } catch(ClassNotFoundException e) {
+                    if(value instanceof JSONArray) {
+                        keyClass = String[].class;
+                    }else{
+                        keyClass = value.getClass();
+                    }
+                }
+
+                if(value instanceof JSONArray) {
+                    Object[] obj = new Object[((JSONArray) value).length()];
+                    for(int i = 0; i < ((JSONArray) value).length(); i++) {
+                        Object o = ((JSONArray) value).get(i);
+                        if(o instanceof JSONObject) {
+                            Class<?> innerClass = Class.forName(this.c.getName() + "$" + key.substring(0, 1).toUpperCase() + key.substring(1));
+                            Constructor ctor = innerClass.getDeclaredConstructor(c);
+
+                            Object inst = ctor.newInstance(this.instance);
+
+                            Deserializer d = new ObjectDeserializer(inst);
+                            obj[i] = d.deserialize((JSONObject) o);
+                        }else{
+                            obj[i] = o.toString();
+                        }
+                    }
+
+                    obj = Arrays.copyOf(obj, obj.length, keyClass);
+                    value = obj;
+
                 }else if(value == JSONObject.NULL){
                     continue;
                 }else if(value instanceof JSONObject){
