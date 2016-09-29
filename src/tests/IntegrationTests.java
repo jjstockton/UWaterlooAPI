@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class IntegrationTests {
 
-    private static UWaterlooClient client = new UWaterlooClient("abf875e0dcd95bc93484f9437934fc6e");
+    private static UWaterlooClient client = new UWaterlooClient("");
 
 
     @Test

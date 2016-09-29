@@ -11,114 +11,102 @@ import java.util.Iterator;
 
 class Deserializer {
 
-    protected Class c;
-
-     Deserializer(Class c) {
-         this.c = c;
-     }
-
-    Object deserialize(JSONObject json) {
-
-        Object newObject = null;
-        try {
-            newObject = c.newInstance();
-        }catch(InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        ObjectDeserializer objectDeserializer = new ObjectDeserializer(newObject);
-
-        return objectDeserializer.deserialize(json);
-    }
-
-     protected static String getSetterMethod(String field){
-        return "set" + field.substring(0,1).toUpperCase() + field.substring(1);
-    }
-
-}
-
-class ObjectDeserializer extends Deserializer {
-
+    private Class c;
     private Object instance;
 
-    public ObjectDeserializer(Object inst) {
-        super(inst.getClass());
-        this.instance = inst;
+    Deserializer(Class c) {
+        this.c = c;
     }
 
-    Object deserialize(JSONObject json) {
+    private Deserializer(Object instance) {
+        this.c = instance.getClass();
+        this.instance = instance;
+    }
 
+    Object deserialize(Object obj) {
+        if (obj instanceof JSONObject) {
+            try {
+                Object newObject;
+                if(instance == null) {
+                    newObject = c.newInstance();
+                } else {
+                    newObject = instance;
+                }
+                return createObject((JSONObject) obj, newObject);
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } else if (obj instanceof JSONArray) {
+            int length = ((JSONArray) obj).length();
+            Object[] objects = new Object[length];
+
+            for (int i = 0; i < length; i++) {
+                objects[i] = deserialize(((JSONArray) obj).get(i));
+            }
+
+            Class arrayClass = null;
+            try {
+                arrayClass = (Class) Class.forName("[L" + objects[0].getClass().getName() + ";");
+            }catch(ClassNotFoundException e) {
+                e.printStackTrace();
+            }catch(ArrayIndexOutOfBoundsException e) {
+                // To do: make it get class of setter method
+                arrayClass = String[].class;
+            }
+            return Arrays.copyOf(objects, objects.length, arrayClass);
+
+        } else if (obj == JSONObject.NULL) {
+            return null;
+        } else {
+            return obj;
+        }
+
+        throw new RuntimeException("Deserializer failed somehow");
+    }
+
+    private Object createObject(JSONObject json, Object inst) {
         try {
-
             Iterator keys = json.keys();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                Object rawValue = json.get(key);
 
-            while(keys.hasNext()){
-                String key = (String)keys.next();
-                Object value = json.get(key);
-
-                String camelCaseKey = JsonUtils.toCamelCase(key);
-                String setterMethod = Deserializer.getSetterMethod(camelCaseKey);
 
                 Class keyClass;
-
+                Object value = null;
                 try {
-                    Class<?> innerClass = Class.forName(this.c.getName() + "$" + key.substring(0, 1).toUpperCase() + key.substring(1));
-                    if(value instanceof JSONArray) {
-                        keyClass = (Class) Class.forName("[L" + innerClass.getName() + ";");
-                    }else {
-                        keyClass = innerClass;
-                    }
-                } catch(ClassNotFoundException e) {
-                    if(value instanceof JSONArray) {
-                        keyClass = String[].class;
-                    }else{
-                        keyClass = value.getClass();
-                    }
-                }
-
-                if(value instanceof JSONArray) {
-                    Object[] obj = new Object[((JSONArray) value).length()];
-                    for(int i = 0; i < ((JSONArray) value).length(); i++) {
-                        Object o = ((JSONArray) value).get(i);
-                        if(o instanceof JSONObject) {
-                            Class<?> innerClass = Class.forName(this.c.getName() + "$" + key.substring(0, 1).toUpperCase() + key.substring(1));
-                            Constructor ctor = innerClass.getDeclaredConstructor(c);
-
-                            Object inst = ctor.newInstance(this.instance);
-
-                            Deserializer d = new ObjectDeserializer(inst);
-                            obj[i] = d.deserialize((JSONObject) o);
-                        }else{
-                            obj[i] = o.toString();
-                        }
-                    }
-
-                    obj = Arrays.copyOf(obj, obj.length, keyClass);
-                    value = obj;
-
-                }else if(value == JSONObject.NULL){
-                    continue;
-                }else if(value instanceof JSONObject){
                     Class<?> innerClass = Class.forName(this.c.getName() + "$" + key.substring(0, 1).toUpperCase() + key.substring(1));
                     Constructor ctor = innerClass.getDeclaredConstructor(c);
 
-                    Object inst = ctor.newInstance(this.instance);
+                    Deserializer d = new Deserializer(ctor.newInstance(inst));
 
-                    Deserializer d = new ObjectDeserializer(inst);
-                    value = d.deserialize(((JSONObject) value));
+                    value = d.deserialize(rawValue);
+
+                } catch (ClassNotFoundException e) {
+                    keyClass = rawValue.getClass();
+                    Deserializer d = new Deserializer(keyClass);
+                    value = d.deserialize(rawValue);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
                 }
 
-                Method setter = this.c.getDeclaredMethod(setterMethod, value.getClass());
-
-                setter.invoke(instance, value);
-
+                String camelCaseKey = JsonUtils.toCamelCase(key);
+                String setterMethod = getSetterMethod(camelCaseKey);
+                Method setter;
+                try {
+                    setter = this.c.getDeclaredMethod(setterMethod, value.getClass());
+                }catch(NullPointerException e) {
+                    continue;
+                }
+                setter.invoke(inst, value);
             }
-
-        }catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | ClassNotFoundException e){
+        }catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
+        return inst;
+    }
 
-        return this.instance;
-
+    private static String getSetterMethod(String field) {
+        return "set" + field.substring(0, 1).toUpperCase() + field.substring(1);
     }
 }
