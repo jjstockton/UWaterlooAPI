@@ -1,6 +1,9 @@
 package UWaterloo;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Schedule {
 
     private String subject;
@@ -19,9 +22,9 @@ public class Schedule {
     private int waitingCapacity;
     private int waitingTotal;
     private String topic;
-    private Reserves[] reserves;
-    private Classes[] classes;
-    private String[] heldWith;
+    private ArrayList<Reserves> reserves;
+    private ArrayList<Classes> classes;
+    private ArrayList<String> heldWith;
     private int term;
     private String academicLevel;
     private String lastUpdated;
@@ -104,19 +107,19 @@ public class Schedule {
         return relatedComponent1;
     }
 
-    public Reserves[] getReserves() {
+    public List<Reserves> getReserves() {
         return reserves;
     }
 
-    protected void setReserves(Reserves[] reserves) {
+    protected void setReserves(ArrayList<Reserves> reserves) {
         this.reserves = reserves;
     }
 
-    public Classes[] getClasses() {
+    public List<Classes> getClasses() {
         return classes;
     }
 
-    protected void setClasses(Classes[] classes) {
+    protected void setClasses(ArrayList<Classes> classes) {
         this.classes = classes;
     }
 
@@ -172,11 +175,11 @@ public class Schedule {
         this.topic = topic;
     }
 
-    public String[] getHeldWith() {
+    public List<String> getHeldWith() {
         return heldWith;
     }
 
-    protected void setHeldWith(String[] heldWith) {
+    protected void setHeldWith(ArrayList<String> heldWith) {
         this.heldWith = heldWith;
     }
 
@@ -240,7 +243,7 @@ public class Schedule {
 
         private Date date;
         private Location location;
-        private String[] instructors;
+        private ArrayList<String> instructors;
 
         Classes(){}
 
@@ -260,11 +263,11 @@ public class Schedule {
             this.location = location;
         }
 
-        public String[] getInstructors() {
+        public List<String> getInstructors() {
             return instructors;
         }
 
-        protected void setInstructors(String[] instructors) {
+        protected void setInstructors(ArrayList<String> instructors) {
             this.instructors = instructors;
         }
 

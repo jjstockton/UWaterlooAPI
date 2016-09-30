@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static UWaterloo.Deserializer.deserialize;
 import static UWaterloo.JsonUtils.getJson;
 
 public class Endpoint {
@@ -22,14 +23,9 @@ public class Endpoint {
     Object getData(String[] args, String key) {
 
         String authenticatedUrl = fillArguments(args) + "?key=" + key;
-
-        System.out.println(authenticatedUrl);
-
         JSONObject jsonObject = getJson(authenticatedUrl).getJSONObject("data");
 
-        Deserializer d = new Deserializer(this.c);
-
-        return d.deserialize(jsonObject);
+        return deserialize(jsonObject, c);
 
     }
 
@@ -51,5 +47,4 @@ public class Endpoint {
         return filledUrl;
 
     }
-
 }

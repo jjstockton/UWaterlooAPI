@@ -1,5 +1,8 @@
 package UWaterloo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Course {
 
     private String courseId;
@@ -8,35 +11,30 @@ public class Course {
     private String title;
     private double units;
     private String description;
-    private String[] instructions;
+    private ArrayList<String> instructions;
     private String prerequisites;
     private String antirequisites;
     private String corequisites;
     private String crosslistings;
-    private String[] termsOffered;
+    private ArrayList<String> termsOffered;
     private String notes;
     private Offerings offerings;
     private boolean needsDepartmentConsent;
     private boolean needsInstructorConsent;
-    private String[] extra;
+    private ArrayList<String> extra;
     private String calendarYear;
     private String url;
     private String academicLevel;
 
     protected Course() {}
 
-    protected Course(String subject, String number, double units, String name) {
+    public Course(String subject, String catalogNumber) {
         this.subject = subject;
-        this.catalogNumber = number;
-        this.units = units;
-        this.title = name;
+        this.catalogNumber = catalogNumber;
     }
 
-    protected Course(String subject, String number, String name, String course_id) {
-        this.subject = subject;
-        this.catalogNumber = number;
-        this.title = name;
-        this.courseId = course_id;
+    public Course(String courseId) {
+        this.courseId = courseId;
     }
 
     public String getCourseId() {
@@ -91,11 +89,11 @@ public class Course {
         this.description = description;
     }
 
-    public String[] getInstructions() {
+    public List<String> getInstructions() {
         return instructions;
     }
 
-    protected void setInstructions(String[] instructions) {
+    protected void setInstructions(ArrayList<String> instructions) {
         this.instructions = instructions;
     }
 
@@ -123,11 +121,11 @@ public class Course {
         this.crosslistings = crosslistings;
     }
 
-    public String[] getTermsOffered() {
+    public List<String> getTermsOffered() {
         return termsOffered;
     }
 
-    protected void setTermsOffered(String[] termsOffered) {
+    protected void setTermsOffered(ArrayList<String> termsOffered) {
         this.termsOffered = termsOffered;
     }
 
@@ -171,11 +169,11 @@ public class Course {
         this.needsInstructorConsent = needsInstructorConsent;
     }
 
-    public String[] getExtra() {
+    public List<String> getExtra() {
         return extra;
     }
 
-    protected void setExtra(String[] extra) {
+    protected void setExtra(ArrayList<String> extra) {
         this.extra = extra;
     }
 
