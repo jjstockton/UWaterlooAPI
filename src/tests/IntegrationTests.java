@@ -1,9 +1,13 @@
 package tests;
 
 import UWaterloo.*;
+import com.sun.deploy.net.HttpResponse;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +17,7 @@ public class IntegrationTests {
 
 
     @Test
-    public void getCourseTest(){
+    public void getCourseTest() {
 
         Course c1 = client.getCourse("ECE", "103");
         Course c2 = client.getCourse("ECON", "101");
@@ -31,6 +35,25 @@ public class IntegrationTests {
 
         assertEquals("graduate", c3.getAcademicLevel());
         assertNotNull(c3.getCalendarYear());
+
+    }
+
+    @Test
+    public void getCoursesTest() {
+
+        List<Course> courses1 = client.getCourses(1169);
+        List<Course> courses2 = client.getCourses();
+
+        assertTrue(courses1.size() > 100);
+        assertTrue(courses2.size() > 100);
+
+        for(Course c : courses1) {
+            assertNotNull(c.getTitle());
+        }
+
+        for(Course c : courses2) {
+            assertNotNull(c.getTitle());
+        }
 
     }
 
@@ -60,16 +83,27 @@ public class IntegrationTests {
 
     @Test
     public void getScheduleTest() {
-        ArrayList<Schedule> scheds = client.getSchedules("ECON", "101");
+        List<Schedule> scheds = client.getSchedules("ECON", "101");
         for(Schedule s : scheds) {
             assertEquals("ECON", s.getSubject());
             assertEquals("101", s.getCatalogNumber());
             assertEquals("undergraduate", s.getAcademicLevel());
             assertTrue(s.getEnrollmentTotal() > 0);
-            assertTrue(s.getClasses().length > 0);
-            assertTrue(s.getReserves().length > 0);
-            assertTrue(s.getReserves()[0].getEnrollmentCapacity() > 0);
+            assertTrue(s.getClasses().size() > 0);
+            assertTrue(s.getReserves().size() > 0);
+            assertTrue(s.getReserves().get(0).getEnrollmentCapacity() > 0);
         }
+    }
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
+    @Test
+    public void noDataReturned() {
+        expectedEx.expect(RuntimeException.class);
+        expectedEx.expectMessage("No data returned");
+
+        client.getCourse("ECE", "6969");
     }
 
 }
