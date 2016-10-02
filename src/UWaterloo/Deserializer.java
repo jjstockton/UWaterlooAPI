@@ -8,11 +8,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static UWaterloo.JsonUtils.isEmpty;
+import static UWaterloo.StringUtils.toCamelCase;
+
 class Deserializer {
 
     private Class baseClass;
 
-    Deserializer(Class c) {
+    protected Deserializer(Class c) {
         this.baseClass = c;
     }
 
@@ -22,27 +25,23 @@ class Deserializer {
 
     static Object deserialize(Object inputObj, Class targetClass) {
 
-        return deserialize(inputObj, new Object(), targetClass);
+        return deserialize(inputObj, null, targetClass);
     }
 
     static Object deserialize(Object from, Object parentObject, Class targetClass) {
 
-
         if(from instanceof JSONObject) {
             Object newObject = null;
             try {
-                Constructor ctor = targetClass.getDeclaredConstructor(parentObject.getClass());
-                newObject = ctor.newInstance(parentObject);
-            } catch (NoSuchMethodException  e) {
-                try {
+                if (parentObject == null) {
                     newObject = targetClass.newInstance();
-                } catch (InstantiationException | IllegalAccessException e1) {
-                    e1.printStackTrace();
+                } else {
+                    Constructor ctor = targetClass.getDeclaredConstructor(parentObject.getClass());
+                    newObject = ctor.newInstance(parentObject);
                 }
-            } catch (NullPointerException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            }catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-
             return populateCustomObject((JSONObject) from, newObject);
         } else if (from instanceof JSONArray) {
 
@@ -51,7 +50,6 @@ class Deserializer {
             for(Object o : (JSONArray) from) {
                 objects.add(deserialize(o, parentObject, targetClass));
             }
-
             return objects;
         } else if(from == JSONObject.NULL) {
             return null;
@@ -69,28 +67,34 @@ class Deserializer {
                 Object rawValue = json.get(key);
 
                 Object value;
-                try {
-                    String innerClassName = c.getName() + "$" + key.substring(0, 1).toUpperCase() + key.substring(1);
-                    Class<?> innerClass = Class.forName(innerClassName);
-
-                    value = deserialize(rawValue, obj, innerClass);
-
-                } catch (ClassNotFoundException e) {
-                    value = deserialize(rawValue, rawValue.getClass());
+                String innerClassName = c.getName() + "$" + key.substring(0, 1).toUpperCase() + key.substring(1);
+                if(rawValue instanceof JSONObject || rawValue instanceof JSONArray && classExists(innerClassName)) {
+                    Class<?> targetClass = Class.forName(innerClassName);
+                    value = deserialize(rawValue, obj, targetClass);
+                } else if(rawValue instanceof JSONArray) {
+                    JSONArray array = (JSONArray) rawValue;
+                    if(isEmpty(array)) {
+                        value = new ArrayList<>();
+                    } else {
+                        value = deserialize(rawValue, array.get(0).getClass());
+                    }
+                } else {
+                    value = deserialize(rawValue, null, rawValue.getClass());
                 }
 
-                String camelCaseKey = JsonUtils.toCamelCase(key);
+                String camelCaseKey = toCamelCase(key);
                 String setterMethod = getSetterMethod(camelCaseKey);
                 Method setter;
                 try {
                     setter = c.getDeclaredMethod(setterMethod, value.getClass());
                 }catch(NullPointerException e) {
                     continue;
+                } catch (NoSuchMethodException e) {
+                    setter = c.getSuperclass().getDeclaredMethod(setterMethod, value.getClass());
                 }
-
                 setter.invoke(obj, value);
             }
-        }catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        }catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return obj;
@@ -98,5 +102,14 @@ class Deserializer {
 
     private static String getSetterMethod(String field) {
         return "set" + field.substring(0, 1).toUpperCase() + field.substring(1);
+    }
+
+    private static boolean classExists(String className) {
+        try {
+            Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        return true;
     }
 }
