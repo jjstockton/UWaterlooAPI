@@ -17,7 +17,7 @@ public class Course {
     private String corequisites;
     private String crosslistings;
     private ArrayList<String> termsOffered;
-    private String notes;
+    private String note;
     private Offerings offerings;
     private boolean needsDepartmentConsent;
     private boolean needsInstructorConsent;
@@ -129,12 +129,12 @@ public class Course {
         this.termsOffered = termsOffered;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getNote() {
+        return note;
     }
 
-    protected void setNotes(String notes) {
-        this.notes = notes;
+    protected void setNote(String notes) {
+        this.note = notes;
     }
 
     public boolean isNeedsDepartmentConsent() {

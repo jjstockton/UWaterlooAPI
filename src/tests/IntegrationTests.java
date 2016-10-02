@@ -1,7 +1,10 @@
 package tests;
 
 import UWaterloo.*;
-import com.sun.deploy.net.HttpResponse;
+import UWaterloo.Course;
+import UWaterloo.Schedule;
+import UWaterloo.Term;
+import UWaterloo.Unit;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -20,7 +23,7 @@ public class IntegrationTests {
     public void getCourseTest() {
 
         Course c1 = client.getCourse("ECE", "103");
-        Course c2 = client.getCourse("ECON", "101");
+        Course c2 = client.getCourse("004874");
         Course c3 = client.getCourse("ECE", "600");
 
         assertEquals("ECE", c1.getSubject());
@@ -54,13 +57,22 @@ public class IntegrationTests {
         for(Course c : courses2) {
             assertNotNull(c.getTitle());
         }
+    }
 
+    @Test
+    public void getCoursesSubject() {
+        List<Course> courses = client.getCourses("ECE");
+
+        for(Course c : courses) {
+            assertEquals("ECE", c.getSubject());
+            assertNotNull(c.getDescription());
+        }
     }
 
     @Test
     public void getUnitsTest(){
 
-        ArrayList<Unit> units = client.getUnits();
+        List<Unit> units = client.getUnits();
 
         ArrayList<String> names = new ArrayList<>();
 
@@ -75,7 +87,7 @@ public class IntegrationTests {
 
     @Test
     public void getTermsTest() {
-        ArrayList<Term> terms = client.getTerms();
+        List<Term> terms = client.getTerms();
 
         assertTrue(terms.size() > 0);
         assertNotNull(terms.get(0).getDescription());
@@ -93,6 +105,11 @@ public class IntegrationTests {
             assertTrue(s.getReserves().size() > 0);
             assertTrue(s.getReserves().get(0).getEnrollmentCapacity() > 0);
         }
+
+        Schedule s = client.getSchedule(4867).get(0);
+
+        assertNotNull(s.getClasses().get(0).getLocation().getBuilding());
+        assertNotNull(s.getTitle());
     }
 
     @Rule

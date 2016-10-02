@@ -2,7 +2,7 @@ package UWaterloo;
 
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.json.*;
 
@@ -12,13 +12,11 @@ public class UWaterlooClient {
 
     private String apiKey;
     private static String BASE_URL = "https://api.uwaterloo.ca/v2/";
-    private String keyString;
 
 
     public UWaterlooClient(String key) {
         if(isValidKey(key)){
             this.apiKey = key;
-            this.keyString = "?key=" + key;
         }
     }
 
@@ -48,162 +46,51 @@ public class UWaterlooClient {
 
     }
 
-    private static int getResponseCode(InputStream response) throws IOException {
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(response));
-        String text= "";
-        String line;
-        while((line = br.readLine()) != null){
-            text += line;
-        }
-
-        JSONObject obj = new JSONObject(text);
-
-        return obj.getJSONObject("meta").getInt("status");
+    public List<Unit> getUnits() {
+        Object args[] = {};
+        return (List<Unit>) Endpoints.CODES_UNITS.getData(args, apiKey);
     }
 
-    private static String getResponse(InputStream input) throws IOException {
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(input));
-
-        String text = "";
-        String line;
-
-        System.out.println("Response:");
-        while((line = br.readLine()) != null){
-            text += line;
-        }
-
-        return text;
+    public List<Term> getTerms() {
+        Object args[] = {};
+        return (List<Term>) Endpoints.CODES_TERMS.getData(args, apiKey);
     }
 
-
-    public ArrayList<Unit> getUnits() {
-
-        Deserializer d = new Deserializer(Unit.class);
-
-        String url = buildUrl("codes", "units");
-
-        JSONArray jsonUnits = getJson(url).getJSONArray("data");
-
-        ArrayList<Unit> units = new ArrayList<>();
-
-        for(int i = 0; i < jsonUnits.length(); i++) {
-
-            JSONObject jsonUnit = jsonUnits.getJSONObject(i);
-
-            units.add((Unit) d.deserialize(jsonUnit));
-
-        }
-
-        return units;
-
+    public List<Course> getCourses() {
+        Object args[] = {};
+        return (List<Course>) Endpoints.COURSES.getData(args, apiKey);
     }
 
-    public ArrayList<Term> getTerms() {
-
-        Deserializer d = new Deserializer(Term.class);
-
-        String url = buildUrl("codes", "terms");
-
-        JSONArray jsonTerms = getJson(url).getJSONArray("data");
-
-        ArrayList<Term> terms = new ArrayList<>();
-
-        for(int i = 0; i < jsonTerms.length(); i++) {
-
-            JSONObject jsonTerm = jsonTerms.getJSONObject(i);
-
-            terms.add((Term) d.deserialize(jsonTerm));
-
-        }
-
-        return terms;
-
+    public List<Course> getCourses(String subject) {
+        String args[] = {subject};
+        return (List<Course>) Endpoints.COURSES_SUBJECT.getData(args, apiKey);
     }
 
-
-    public ArrayList<Course> getCourses(int term){
-
-        Deserializer d = new Deserializer(Course.class);
-
-        String url = buildUrl("terms", String.valueOf(term), "courses");
-
-        JSONArray jsonCourses = getJson(url).getJSONArray("data");
-
-        ArrayList<Course> courses = new ArrayList<>();
-
-        for(int i = 0; i < jsonCourses.length(); i++) {
-
-            JSONObject jsonCourse = jsonCourses.getJSONObject(i);
-
-            courses.add((Course) d.deserialize(jsonCourse));
-
-        }
-
-        return courses;
-
+    public Course getCourse(String courseId) {
+        String args[] = {courseId};
+        return (Course) Endpoints.COURSES_COURSEID.getData(args, apiKey);
     }
 
-    public ArrayList<Course> getCourses(){
+    public List<Schedule> getSchedule(int classNumber) {
+        Integer args[] = {classNumber};
+        return (List<Schedule>) Endpoints.COURSES_CLASSNUMBER_SCHEDULE.getData(args, apiKey);
+    }
 
-        Deserializer d = new Deserializer(Course.class);
-
-        String url = buildUrl("courses");
-
-        JSONArray jsonCourses = getJson(url).getJSONArray("data");
-
-        ArrayList<Course> courses = new ArrayList<>();
-
-        for(int i = 0; i < jsonCourses.length(); i++) {
-
-            JSONObject jsonCourse = jsonCourses.getJSONObject(i);
-
-            courses.add((Course) d.deserialize(jsonCourse));
-
-        }
-
-        return courses;
+    public List<Course> getCourses(int term){
+        Object args[] = {term};
+        return (List<Course>) Endpoints.TERMS_TERM_COURSES.getData(args, apiKey);
     }
 
     public Course getCourse(String subject, String catalogNumber){
-
-        String url = buildUrl("courses", subject, catalogNumber);
-
-        JSONObject course = getJson(url).getJSONObject("data");
-
-        Deserializer d = new Deserializer(Course.class);
-
-        return (Course) d.deserialize(course);
-
+        Object args[] = {subject, catalogNumber};
+        return (Course) Endpoints.COURSES_SUBJECT_CATALOGNUMBER.getData(args, apiKey);
     }
 
-    public ArrayList<Schedule> getSchedules(String subject, String catalogNumber) {
-        Deserializer d = new Deserializer(Schedule.class);
-        String url = buildUrl("courses", subject, catalogNumber, "schedule");
-        JSONArray jsonSchedules = getJson(url).getJSONArray("data");
-        ArrayList<Schedule> schedules = new ArrayList<>();
-
-        for(int i = 0; i < jsonSchedules.length(); i++) {
-            JSONObject jsonSchedule = jsonSchedules.getJSONObject(i);
-            schedules.add((Schedule) d.deserialize(jsonSchedule));
-        }
-
-        return schedules;
+    public List<Schedule> getSchedules(String subject, String catalogNumber) {
+        Object args[] = {subject, catalogNumber};
+        return (List<Schedule>) Endpoints.COURSES_SUBJECT_CATALOGNUMBER_SCHEDULE.getData(args, apiKey);
     }
-
-    private String buildUrl(String... params){
-
-        String url = BASE_URL;
-
-        url = url + String.join("/", params) + ".json?key=" + apiKey;
-
-        return url;
-
-    }
-
 }
-
 
 class HttpResponseException extends RuntimeException {
 
@@ -236,7 +123,5 @@ class HttpResponseException extends RuntimeException {
         return errorMessage;
 
     }
-
-
 }
 

@@ -4,13 +4,8 @@ package UWaterloo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Schedule {
+public class Schedule extends Course {
 
-    private String subject;
-    private String catalogNumber;
-    private double units;
-    private String title;
-    private String note;
     private int classNumber;
     private String section;
     private String campus;
@@ -26,50 +21,9 @@ public class Schedule {
     private ArrayList<Classes> classes;
     private ArrayList<String> heldWith;
     private int term;
-    private String academicLevel;
     private String lastUpdated;
 
     public Schedule(){}
-
-    public String getSubject() {
-        return subject;
-    }
-
-    protected void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getCatalogNumber() {
-        return catalogNumber;
-    }
-
-    protected void setCatalogNumber(String catalogNumber) {
-        this.catalogNumber = catalogNumber;
-    }
-
-    public double getUnits() {
-        return units;
-    }
-
-    protected void setUnits(Double units) {
-        this.units = units;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    protected void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    protected void setNote(String note) {
-        this.note = note;
-    }
 
     public int getClassNumber() {
         return classNumber;
@@ -189,14 +143,6 @@ public class Schedule {
 
     protected void setTerm(Integer term) {
         this.term = term;
-    }
-
-    public String getAcademicLevel() {
-        return academicLevel;
-    }
-
-    protected void setAcademicLevel(String academicLevel) {
-        this.academicLevel = academicLevel;
     }
 
     public String getLastUpdated() {

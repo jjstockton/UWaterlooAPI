@@ -1,6 +1,6 @@
 package UWaterloo;
 
-public enum Endpoints {
+enum Endpoints {
 
     // Food Services
     FOODSERVICES_MENU("/foodservices/menu", Object.class),
@@ -21,12 +21,12 @@ public enum Endpoints {
     FEDS_LOCATIONS("/feds/locations", Object.class),
 
     // Course
-    COURSES("/courses", Object.class),
+    COURSES("/courses", Course.class),
     COURSES_SUBJECT("/courses/{subject}", Course.class),
-    COURSES_COURSEID("/courses/{course_id}", Object.class),
-    COURSES_CLASSNUMBER_SCHEDULE("/courses/{class_number}/schedule", Object.class),
+    COURSES_COURSEID("/courses/{course_id}", Course.class),
+    COURSES_CLASSNUMBER_SCHEDULE("/courses/{class_number}/schedule", Schedule.class),
     COURSES_SUBJECT_CATALOGNUMBER("/courses/{subject}/{catalog_number}", Course.class),
-    COURSES_SUBJECT_CATALOGNUMBER_SCHEDULE("/courses/{subject}/{catalog_number}/schedule", Object.class),
+    COURSES_SUBJECT_CATALOGNUMBER_SCHEDULE("/courses/{subject}/{catalog_number}/schedule", Schedule.class),
     COURSES_SUBJECT_CATALOGNUMBER_PREREQUISITES("/courses/{subject}/{catalog_number}/prerequisites", Object.class),
     COURSES_SUBJECT_CATALOGNUMBER_EXAMSCHEDULE("/courses/{subject}/{catalog_number}/examschedule", Object.class),
 
@@ -62,7 +62,7 @@ public enum Endpoints {
 
     // Terms
     TERMS_LIST("/terms/list", Object.class),
-    TERMS_TERM_COURSES("/terms/{term}/courses", Object.class),
+    TERMS_TERM_COURSES("/terms/{term}/courses", Course.class),
     TERMS_TERM_EXAMSCHEDULE("/terms/{term}/examschedule", Object.class),
     TERMS_TERM_SUBJECT_SCHEDULE("/terms/{term}/{subject}/schedule", Object.class),
     TERMS_TERM_SUBJECT_CATALOGNUMBER_SCHEDULE("/terms/{term}/{subject}/{catalog_number}/schedule", Object.class),
@@ -78,8 +78,8 @@ public enum Endpoints {
     RESOURCES_SUNSHINELIST("/resources/sunshinelist", Object.class),
 
     // Definitions and Codes
-    CODES_UNITS("/codes/units", Object.class),
-    CODES_TERMS("/codes/terms", Object.class),
+    CODES_UNITS("/codes/units", Unit.class),
+    CODES_TERMS("/codes/terms", Term.class),
     CODES_GROUPS("/codes/groups", Object.class),
     CODES_SUBJETS("/codes/subjects", Object.class),
     CODES_INSTRUCTIONS("/codes/instructions", Object.class),
@@ -132,7 +132,7 @@ public enum Endpoints {
         e = new Endpoint(uri, c);
     }
 
-    Object getData(String[] args, String key) {
+    Object getData(Object[] args, String key) {
         return e.getData(args, key);
     }
 }

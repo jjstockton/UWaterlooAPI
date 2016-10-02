@@ -1,14 +1,12 @@
 package UWaterloo;
 
-import org.json.JSONObject;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static UWaterloo.Deserializer.deserialize;
 import static UWaterloo.JsonUtils.getJson;
 
-public class Endpoint {
+class Endpoint {
 
     private static final String BASE_URL = "https://api.uwaterloo.ca/v2";
 
@@ -20,16 +18,16 @@ public class Endpoint {
         this.c = c;
     }
 
-    Object getData(String[] args, String key) {
+    Object getData(Object[] args, String key) {
 
         String authenticatedUrl = fillArguments(args) + "?key=" + key;
-        JSONObject jsonObject = getJson(authenticatedUrl).getJSONObject("data");
+        Object json = getJson(authenticatedUrl).get("data");
 
-        return deserialize(jsonObject, c);
+        return deserialize(json, c);
 
     }
 
-    private String fillArguments(String... args) {
+    private String fillArguments(Object... args) {
 
         String filledUrl = this.url;
         Pattern p = Pattern.compile("\\{.*?\\}");
@@ -37,7 +35,7 @@ public class Endpoint {
 
         int i;
         for(i = 0; m.find(); i++) {
-            filledUrl = filledUrl.replaceFirst("\\{.*?\\}", args[i]);
+            filledUrl = filledUrl.replaceFirst("\\{.*?\\}", args[i].toString());
         }
 
         if(i < args.length) {

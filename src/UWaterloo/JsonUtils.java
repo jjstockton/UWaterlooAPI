@@ -17,7 +17,6 @@ final class JsonUtils {
         String jsonString = "";
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(input));
-            //String text = "";
             String line;
             while ((line = br.readLine()) != null) {
                 jsonString += line;
@@ -26,14 +25,11 @@ final class JsonUtils {
             System.err.println(e);
         }
 
-        //System.out.println(jsonString);
         return new JSONObject(jsonString);
 
     }
 
     static JSONObject getJson(String url) {
-
-        //String url = BASE_URL + endpoint + ".json" + keyString;
 
         JSONObject json = null;
 
@@ -70,29 +66,11 @@ final class JsonUtils {
 
     }
 
-    static String toCamelCase(String input) {
-
-        StringBuilder str = new StringBuilder(input);
-
-        while (str.toString().contains("_")) {
-
-            str.setCharAt(str.indexOf("_") + 1, Character.toUpperCase(str.charAt(str.indexOf("_") + 1)));
-            str.deleteCharAt(str.indexOf("_"));
+    static boolean isEmpty(JSONArray array) {
+        for(Object o : array) {
+            return false;
         }
-        return str.toString();
+        return true;
     }
-
-    static String[] toStringArray(JSONArray jsonArray) {
-
-        String[] array = new String[jsonArray.length()];
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            array[i] = (String) jsonArray.get(i);
-        }
-
-        return array;
-
-    }
-
 
 }
