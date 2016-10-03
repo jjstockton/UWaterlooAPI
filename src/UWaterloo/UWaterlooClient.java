@@ -4,6 +4,7 @@ import java.net.*;
 import java.io.*;
 import java.util.List;
 
+import UWaterloo.models.*;
 import org.json.*;
 
 import static UWaterloo.JsonUtils.*;
@@ -89,6 +90,11 @@ public class UWaterlooClient {
     public List<Schedule> getSchedules(String subject, String catalogNumber) {
         Object args[] = {subject, catalogNumber};
         return (List<Schedule>) Endpoints.COURSES_SUBJECT_CATALOGNUMBER_SCHEDULE.getData(args, apiKey);
+    }
+
+    public ExamSchedule getExamSchedule(String subject, String catalogNumber) {
+        String args[] = {subject, catalogNumber};
+        return (ExamSchedule) Endpoints.COURSES_SUBJECT_CATALOGNUMBER_EXAMSCHEDULE.getData(args, apiKey);
     }
 }
 

@@ -1,5 +1,7 @@
 package UWaterloo;
 
+import UWaterloo.models.*;
+
 enum Endpoints {
 
     // Food Services
@@ -28,7 +30,7 @@ enum Endpoints {
     COURSES_SUBJECT_CATALOGNUMBER("/courses/{subject}/{catalog_number}", Course.class),
     COURSES_SUBJECT_CATALOGNUMBER_SCHEDULE("/courses/{subject}/{catalog_number}/schedule", Schedule.class),
     COURSES_SUBJECT_CATALOGNUMBER_PREREQUISITES("/courses/{subject}/{catalog_number}/prerequisites", Object.class),
-    COURSES_SUBJECT_CATALOGNUMBER_EXAMSCHEDULE("/courses/{subject}/{catalog_number}/examschedule", Object.class),
+    COURSES_SUBJECT_CATALOGNUMBER_EXAMSCHEDULE("/courses/{subject}/{catalog_number}/examschedule", ExamSchedule.class),
 
     // Awards/Scholarships
     AWARDS_GRADUATE("/awards/graduate", Object.class),

@@ -1,10 +1,7 @@
 package tests;
 
 import UWaterloo.*;
-import UWaterloo.Course;
-import UWaterloo.Schedule;
-import UWaterloo.Term;
-import UWaterloo.Unit;
+import UWaterloo.models.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,7 +14,6 @@ import static org.junit.Assert.*;
 public class IntegrationTests {
 
     private static UWaterlooClient client = new UWaterlooClient("");
-
 
     @Test
     public void getCourseTest() {
@@ -121,6 +117,17 @@ public class IntegrationTests {
         expectedEx.expectMessage("No data returned");
 
         client.getCourse("ECE", "6969");
+    }
+
+    @Test
+    public void ExamSchedule() {
+        try {
+            ExamSchedule e = client.getExamSchedule("ECE", "105");
+            assertNotNull(e.getSections().get(0).getDate());
+        } catch(RuntimeException e) {
+            assertTrue(e.getMessage().equals("No data returned"));
+        }
+
     }
 
 }
