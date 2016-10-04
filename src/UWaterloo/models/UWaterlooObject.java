@@ -6,18 +6,17 @@ public class UWaterlooObject {
 
     protected Object getAttribute(String name) {
 
-        //Object value = null;
-
         Field f = getField(name);
         f.setAccessible(true);
         Object rawValue = null;
         try {
             rawValue = f.get(this);
-        } catch(IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        if(rawValue == null) {
+        if (rawValue == null) {
+            // Load value
             return rawValue;
         } else {
             return rawValue;
@@ -29,12 +28,12 @@ public class UWaterlooObject {
         do {
             try {
                 return c.getDeclaredField(name);
-            } catch(NoSuchFieldException e) {
+            } catch (NoSuchFieldException e) {
                 continue;
             }
 
-        } while((c = this.getClass().getSuperclass()) != null);
+        } while ((c = c.getSuperclass()) != null);
 
-        throw new IllegalArgumentException();
+        throw new NoSuchFieldError();
     }
 }

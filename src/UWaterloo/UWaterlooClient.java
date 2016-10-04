@@ -1,13 +1,11 @@
 package UWaterloo;
 
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import UWaterloo.models.*;
-import org.json.*;
-
-import static UWaterloo.JsonUtils.*;
 
 public class UWaterlooClient {
 
@@ -16,7 +14,7 @@ public class UWaterlooClient {
 
 
     public UWaterlooClient(String key) {
-        if(isValidKey(key)){
+        if (isValidKey(key)) {
             this.apiKey = key;
         }
     }
@@ -35,11 +33,11 @@ public class UWaterlooClient {
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
-                throw new HttpResponseException(responseCode, conn.getErrorStream());
+                throw new ApiResponseException(responseCode, conn.getErrorStream());
             }
 
             conn.disconnect();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -77,12 +75,12 @@ public class UWaterlooClient {
         return (List<Schedule>) Endpoints.COURSES_CLASSNUMBER_SCHEDULE.getData(args, apiKey);
     }
 
-    public List<Course> getCourses(int term){
+    public List<Course> getCourses(int term) {
         Object args[] = {term};
         return (List<Course>) Endpoints.TERMS_TERM_COURSES.getData(args, apiKey);
     }
 
-    public Course getCourse(String subject, String catalogNumber){
+    public Course getCourse(String subject, String catalogNumber) {
         Object args[] = {subject, catalogNumber};
         return (Course) Endpoints.COURSES_SUBJECT_CATALOGNUMBER.getData(args, apiKey);
     }
@@ -95,39 +93,6 @@ public class UWaterlooClient {
     public ExamSchedule getExamSchedule(String subject, String catalogNumber) {
         String args[] = {subject, catalogNumber};
         return (ExamSchedule) Endpoints.COURSES_SUBJECT_CATALOGNUMBER_EXAMSCHEDULE.getData(args, apiKey);
-    }
-}
-
-class HttpResponseException extends RuntimeException {
-
-    public HttpResponseException() { super(); }
-    private HttpResponseException(String message) { super(message); }
-    public HttpResponseException(String message, Throwable cause) { super(message, cause); }
-    public HttpResponseException(Throwable cause) { super(cause); }
-
-
-     HttpResponseException(int responseCode, InputStream errorStream) {
-        this(getErrorMessage(responseCode, errorStream));
-    }
-
-    private static String getErrorMessage(int responseCode, InputStream errorStream) {
-
-        String errorMessage ;
-
-        switch (responseCode) {
-            case 401:
-                errorMessage = "Invalid API Key.";
-                break;
-            case 511:
-                errorMessage = "API Key is required.";
-                break;
-            default:
-                JSONObject obj = getJson(errorStream);
-                errorMessage = obj.getJSONObject("meta").getString("message");
-        }
-
-        return errorMessage;
-
     }
 }
 

@@ -7,7 +7,8 @@ public class Unit extends UWaterlooObject {
     private String unitShortName;
     private String unitFullName;
 
-    public  Unit(){}
+    public Unit() {
+    }
 
     public String getUnitCode() {
         return unitCode;

@@ -46,11 +46,11 @@ public class IntegrationTests {
         assertTrue(courses1.size() > 100);
         assertTrue(courses2.size() > 100);
 
-        for(Course c : courses1) {
+        for (Course c : courses1) {
             assertNotNull(c.getTitle());
         }
 
-        for(Course c : courses2) {
+        for (Course c : courses2) {
             assertNotNull(c.getTitle());
         }
     }
@@ -59,20 +59,20 @@ public class IntegrationTests {
     public void getCoursesSubject() {
         List<Course> courses = client.getCourses("ECE");
 
-        for(Course c : courses) {
+        for (Course c : courses) {
             assertEquals("ECE", c.getSubject());
             assertNotNull(c.getDescription());
         }
     }
 
     @Test
-    public void getUnitsTest(){
+    public void getUnitsTest() {
 
         List<Unit> units = client.getUnits();
 
         ArrayList<String> names = new ArrayList<>();
 
-        for(Unit u : units){
+        for (Unit u : units) {
             names.add(u.getUnitCode());
         }
 
@@ -92,7 +92,7 @@ public class IntegrationTests {
     @Test
     public void getScheduleTest() {
         List<Schedule> scheds = client.getSchedules("ECON", "101");
-        for(Schedule s : scheds) {
+        for (Schedule s : scheds) {
             assertEquals("ECON", s.getSubject());
             assertEquals("101", s.getCatalogNumber());
             assertEquals("undergraduate", s.getAcademicLevel());
@@ -124,7 +124,7 @@ public class IntegrationTests {
         try {
             ExamSchedule e = client.getExamSchedule("ECE", "105");
             assertNotNull(e.getSections().get(0).getDate());
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             assertTrue(e.getMessage().equals("No data returned"));
         }
 

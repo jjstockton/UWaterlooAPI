@@ -1,8 +1,8 @@
 package UWaterloo;
 
 final class StringUtils {
-    static String toCamelCase(String input) {
 
+    static String toCamelCase(String input) {
         StringBuilder str = new StringBuilder(input);
 
         while (str.toString().contains("_")) {

@@ -9,7 +9,6 @@ import static UWaterloo.JsonUtils.getJson;
 class Endpoint {
 
     private static final String BASE_URL = "https://api.uwaterloo.ca/v2";
-
     private final String url;
     final Class c;
 
@@ -28,17 +27,16 @@ class Endpoint {
     }
 
     private String fillArguments(Object... args) {
-
         String filledUrl = this.url;
         Pattern p = Pattern.compile("\\{.*?\\}");
         Matcher m = p.matcher(this.url);
 
         int i;
-        for(i = 0; m.find(); i++) {
+        for (i = 0; m.find(); i++) {
             filledUrl = filledUrl.replaceFirst("\\{.*?\\}", args[i].toString());
         }
 
-        if(i < args.length) {
+        if (i < args.length) {
             throw new IllegalArgumentException();
         }
 

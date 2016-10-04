@@ -3,17 +3,13 @@ package UWaterloo;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 final class JsonUtils {
 
     static JSONObject getJson(InputStream input) {
-
         String jsonString = "";
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(input));
@@ -46,14 +42,14 @@ final class JsonUtils {
 
 
             if (responseCode != 200) {
-                throw new HttpResponseException(responseCode, conn.getErrorStream());
+                throw new ApiResponseException(responseCode, conn.getErrorStream());
             }
 
 
             json = getJson(site.openStream());
             int metaResponseCode = json.getJSONObject("meta").getInt("status");
             if (metaResponseCode != 200) {
-                throw new HttpResponseException(metaResponseCode, site.openStream());
+                throw new ApiResponseException(metaResponseCode, site.openStream());
             }
 
             conn.disconnect();
@@ -67,7 +63,7 @@ final class JsonUtils {
     }
 
     static boolean isEmpty(JSONArray array) {
-        for(Object o : array) {
+        for (Object o : array) {
             return false;
         }
         return true;

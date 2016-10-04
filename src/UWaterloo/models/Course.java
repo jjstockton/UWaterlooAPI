@@ -26,7 +26,8 @@ public class Course extends UWaterlooObject {
     private String url;
     private String academicLevel;
 
-    public Course() {}
+    public Course() {
+    }
 
     public Course(String subject, String catalogNumber) {
         this.subject = subject;
@@ -217,7 +218,8 @@ public class Course extends UWaterlooObject {
         private boolean conradGrebel;
         private boolean conradGrebelOnly;
 
-        public Offerings() {}
+        public Offerings() {
+        }
 
         public boolean isOnline() {
             return online;

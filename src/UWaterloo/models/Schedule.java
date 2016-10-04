@@ -1,9 +1,9 @@
 package UWaterloo.models;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
+// This should NOT extend Course!
 public class Schedule extends Course {
 
     private int classNumber;
@@ -23,7 +23,8 @@ public class Schedule extends Course {
     private int term;
     private String lastUpdated;
 
-    public Schedule(){}
+    public Schedule() {
+    }
 
     public int getClassNumber() {
         return classNumber;
@@ -158,7 +159,8 @@ public class Schedule extends Course {
         private int enrollmentCapacity;
         private int enrollmentTotal;
 
-        public Reserves(){}
+        public Reserves() {
+        }
 
         public String getReserveGroup() {
             return reserveGroup;
@@ -191,7 +193,8 @@ public class Schedule extends Course {
         private Location location;
         private ArrayList<String> instructors;
 
-        public Classes(){}
+        public Classes() {
+        }
 
         public Date getDate() {
             return date;
@@ -227,7 +230,8 @@ public class Schedule extends Course {
             private boolean isCancelled;
             private boolean isClosed;
 
-            public Date(){}
+            public Date() {
+            }
 
             public String getStartTime() {
                 return startTime;
@@ -298,7 +302,8 @@ public class Schedule extends Course {
             private String building;
             private String room;
 
-            public Location(){}
+            public Location() {
+            }
 
             public String getBuilding() {
                 return building;

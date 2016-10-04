@@ -4,9 +4,10 @@ public class Term extends UWaterlooObject {
     private String abbreviation;
     private String description;
 
-    public Term(){}
+    public Term() {
+    }
 
-    protected Term(String abbreviation, String description){
+    protected Term(String abbreviation, String description) {
         this.abbreviation = abbreviation;
         this.description = description;
     }
