@@ -1,6 +1,6 @@
-# UWaterlooAPI (WIP)
+# Open Data for Java (WIP)
 
-A Java wrapper for the University of Waterloo's Open Data API.
+An unofficial Java wrapper for the University of Waterloo's [Open Data API](https://uwaterloo.ca/api/).
 
 ### Basic Usage
 

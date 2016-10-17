@@ -1,5 +1,6 @@
-package UWaterloo;
+package UWaterloo.internal.utils;
 
+import UWaterloo.internal.http.ApiResponseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,9 +8,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-final class JsonUtils {
+public final class JsonUtils {
 
-    static JSONObject getJson(InputStream input) {
+    public static JSONObject getJson(InputStream input) {
         String jsonString = "";
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(input));
@@ -25,7 +26,7 @@ final class JsonUtils {
 
     }
 
-    static JSONObject getJson(String url) {
+    public static JSONObject getJson(String url) {
 
         JSONObject json = null;
 
@@ -62,7 +63,7 @@ final class JsonUtils {
 
     }
 
-    static boolean isEmpty(JSONArray array) {
+    public static boolean isEmpty(JSONArray array) {
         for (Object o : array) {
             return false;
         }

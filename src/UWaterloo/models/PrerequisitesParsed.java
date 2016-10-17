@@ -1,4 +1,4 @@
-package UWaterloo;
+package UWaterloo.models;
 
 public class PrerequisitesParsed {
 

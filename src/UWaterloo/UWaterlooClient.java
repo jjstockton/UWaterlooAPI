@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import UWaterloo.internal.http.ApiResponseException;
 import UWaterloo.models.*;
 
 public class UWaterlooClient {
@@ -47,52 +48,52 @@ public class UWaterlooClient {
 
     public List<Unit> getUnits() {
         Object args[] = {};
-        return (List<Unit>) Endpoints.CODES_UNITS.getData(args, apiKey);
+        return (List<Unit>) Endpoint.CODES_UNITS.getData(args, apiKey);
     }
 
     public List<Term> getTerms() {
         Object args[] = {};
-        return (List<Term>) Endpoints.CODES_TERMS.getData(args, apiKey);
+        return (List<Term>) Endpoint.CODES_TERMS.getData(args, apiKey);
     }
 
     public List<Course> getCourses() {
         Object args[] = {};
-        return (List<Course>) Endpoints.COURSES.getData(args, apiKey);
+        return (List<Course>) Endpoint.COURSES.getData(args, apiKey);
     }
 
     public List<Course> getCourses(String subject) {
         String args[] = {subject};
-        return (List<Course>) Endpoints.COURSES_SUBJECT.getData(args, apiKey);
+        return (List<Course>) Endpoint.COURSES_SUBJECT.getData(args, apiKey);
     }
 
     public Course getCourse(String courseId) {
         String args[] = {courseId};
-        return (Course) Endpoints.COURSES_COURSEID.getData(args, apiKey);
+        return (Course) Endpoint.COURSES_COURSEID.getData(args, apiKey);
     }
 
     public List<Schedule> getSchedule(int classNumber) {
         Integer args[] = {classNumber};
-        return (List<Schedule>) Endpoints.COURSES_CLASSNUMBER_SCHEDULE.getData(args, apiKey);
+        return (List<Schedule>) Endpoint.COURSES_CLASSNUMBER_SCHEDULE.getData(args, apiKey);
     }
 
     public List<Course> getCourses(int term) {
         Object args[] = {term};
-        return (List<Course>) Endpoints.TERMS_TERM_COURSES.getData(args, apiKey);
+        return (List<Course>) Endpoint.TERMS_TERM_COURSES.getData(args, apiKey);
     }
 
     public Course getCourse(String subject, String catalogNumber) {
         Object args[] = {subject, catalogNumber};
-        return (Course) Endpoints.COURSES_SUBJECT_CATALOGNUMBER.getData(args, apiKey);
+        return (Course) Endpoint.COURSES_SUBJECT_CATALOGNUMBER.getData(args, apiKey);
     }
 
     public List<Schedule> getSchedules(String subject, String catalogNumber) {
         Object args[] = {subject, catalogNumber};
-        return (List<Schedule>) Endpoints.COURSES_SUBJECT_CATALOGNUMBER_SCHEDULE.getData(args, apiKey);
+        return (List<Schedule>) Endpoint.COURSES_SUBJECT_CATALOGNUMBER_SCHEDULE.getData(args, apiKey);
     }
 
     public ExamSchedule getExamSchedule(String subject, String catalogNumber) {
         String args[] = {subject, catalogNumber};
-        return (ExamSchedule) Endpoints.COURSES_SUBJECT_CATALOGNUMBER_EXAMSCHEDULE.getData(args, apiKey);
+        return (ExamSchedule) Endpoint.COURSES_SUBJECT_CATALOGNUMBER_EXAMSCHEDULE.getData(args, apiKey);
     }
 }
 

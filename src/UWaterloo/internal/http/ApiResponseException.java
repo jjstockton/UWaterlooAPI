@@ -1,10 +1,10 @@
-package UWaterloo;
+package UWaterloo.internal.http;
 
 import org.json.JSONObject;
 
 import java.io.InputStream;
 
-import static UWaterloo.JsonUtils.getJson;
+import static UWaterloo.internal.utils.JsonUtils.getJson;
 
 public class ApiResponseException extends RuntimeException {
 
@@ -25,11 +25,11 @@ public class ApiResponseException extends RuntimeException {
     }
 
 
-    ApiResponseException(int responseCode, InputStream errorStream) {
+    public ApiResponseException(int responseCode, InputStream errorStream) {
         this(getApiResponse(responseCode, errorStream));
     }
 
-    private static String getApiResponse(int responseCode, InputStream errorStream) {
+    public static String getApiResponse(int responseCode, InputStream errorStream) {
 
         String errorMessage;
 

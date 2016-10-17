@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static UWaterloo.JsonUtils.isEmpty;
-import static UWaterloo.StringUtils.toCamelCase;
+import static UWaterloo.internal.utils.JsonUtils.isEmpty;
+import static UWaterloo.internal.utils.StringUtils.toCamelCase;
 
 class Deserializer {
     private Class baseClass;
