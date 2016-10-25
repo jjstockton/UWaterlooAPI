@@ -32,7 +32,7 @@ public class ExamSchedule {
         private String location;
         private String notes;
 
-        Sections() {
+        public Sections() {
         }
 
         public String getSection() {

@@ -1,7 +1,13 @@
 package UWaterloo;
 
 import UWaterloo.models.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,7 +154,27 @@ enum Endpoint {
         String authenticatedUrl = fillArguments(args) + "?key=" + key;
         Object json = getJson(authenticatedUrl).get("data");
 
-        return deserialize(json, c);
+
+
+        try {
+            Constructor<?> constructor = this.c.getConstructor(JSONObject.class);
+
+            if(json instanceof JSONArray) {
+                List<Object> objects = new ArrayList<>();
+
+                for(Object in : (JSONArray) json) {
+                    objects.add(constructor.newInstance((JSONObject) in));
+                }
+
+                return objects;
+            }
+
+            return constructor.newInstance(json);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        throw new RuntimeException("Shouldn't be here!");
     }
 
     private String fillArguments(Object... args) {
