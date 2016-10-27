@@ -1,12 +1,14 @@
 package UWaterloo.models;
 
-import org.json.JSONObject;
+import UWaterloo.internal.json.JsonObject;
+
+import java.util.List;
 
 public class Course extends UWaterlooObject {
 
-    private JSONObject data;
+    private JsonObject data;
 
-    public Course(JSONObject data) {
+    public Course(JsonObject data) {
         this.data = data;
     }
 
@@ -37,9 +39,9 @@ public class Course extends UWaterlooObject {
         return data.getString("description");
     }
 
-//    public List<String> getInstructions() {
-//        return data.getString("catalog_number");
-//    }
+    public List<String> getInstructions() {
+        return data.getList("instructions", String.class);
+    }
 
     public String getPrerequisites() {
         return data.getString("prerequisites");
@@ -53,9 +55,9 @@ public class Course extends UWaterlooObject {
         return data.getString("cross_listings");
     }
 
-//    public List<String> getTermsOffered() {
-//        return termsOffered;
-//    }
+    public List<String> getTermsOffered() {
+        return data.getList("terms_offered", String.class);
+    }
 
     public String getNotes() {
         return data.getString("notes");
@@ -74,12 +76,12 @@ public class Course extends UWaterlooObject {
     }
 
     public Offerings getOfferings() {
-        return new Offerings(data.getJSONObject("offerings"));
+        return new Offerings(data.getJsonObject("offerings"));
     }
 
-//    public List<String> getExtra() {
-//        return extra;
-//    }
+    public List<String> getExtra() {
+        return data.getList("extra", String.class);
+    }
 
     public String getCalendarYear() {
         return data.getString("calendar_year");
@@ -96,8 +98,8 @@ public class Course extends UWaterlooObject {
 
     public class Offerings {
 
-        private JSONObject data;
-        public Offerings(JSONObject data) {
+        private JsonObject data;
+        public Offerings(JsonObject data) {
             this.data = data;
         }
 

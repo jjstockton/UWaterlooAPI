@@ -1,8 +1,8 @@
 package UWaterloo;
 
+import UWaterloo.internal.json.JsonArray;
+import UWaterloo.internal.json.JsonObject;
 import UWaterloo.models.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static UWaterloo.Deserializer.deserialize;
 import static UWaterloo.internal.utils.JsonUtils.getJson;
 
 enum Endpoint {
@@ -152,21 +151,22 @@ enum Endpoint {
     Object getData(Object[] args, String key) {
 
         String authenticatedUrl = fillArguments(args) + "?key=" + key;
-        Object json = getJson(authenticatedUrl).get("data");
+        Object json = getJson(authenticatedUrl).getJsonObject("data");
 
 
 
         try {
-            Constructor<?> constructor = this.c.getConstructor(JSONObject.class);
+            Constructor<?> constructor = this.c.getConstructor(JsonObject.class);
 
-            if(json instanceof JSONArray) {
-                List<Object> objects = new ArrayList<>();
-
-                for(Object in : (JSONArray) json) {
-                    objects.add(constructor.newInstance((JSONObject) in));
-                }
-
-                return objects;
+            if(json instanceof JsonArray) {
+//                List<Object> objects = new ArrayList<>();
+//
+//                for(Object in : (JsonArray) json) {
+//                    objects.add(constructor.newInstance((JsonArray) in));
+//                }
+//
+//                return objects;
+                throw new RuntimeException("Shouldn't be here");
             }
 
             return constructor.newInstance(json);

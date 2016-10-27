@@ -1,6 +1,6 @@
 package UWaterloo.internal.http;
 
-import org.json.JSONObject;
+import UWaterloo.internal.json.JsonObject;
 
 import java.io.InputStream;
 
@@ -41,8 +41,8 @@ public class ApiResponseException extends RuntimeException {
                 errorMessage = "API Key is required.";
                 break;
             default:
-                JSONObject obj = getJson(errorStream);
-                errorMessage = obj.getJSONObject("meta").getString("message");
+                JsonObject obj = getJson(errorStream);
+                errorMessage = obj.getJsonObject("meta").getString("message");
         }
 
         return errorMessage;

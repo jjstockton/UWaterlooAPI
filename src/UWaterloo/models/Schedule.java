@@ -1,6 +1,7 @@
 package UWaterloo.models;
 
-import org.json.JSONObject;
+
+import UWaterloo.internal.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,9 @@ public class Schedule extends Course {
     private ArrayList<String> heldWith;
     private int term;
     private String lastUpdated;
-    private JSONObject data;
+    private JsonObject data;
 
-    public Schedule(JSONObject data) {
+    public Schedule(JsonObject data) {
         super(data);
     }
 

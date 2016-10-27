@@ -1,8 +1,7 @@
 package UWaterloo.internal.utils;
 
 import UWaterloo.internal.http.ApiResponseException;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import UWaterloo.internal.json.JsonObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -10,7 +9,7 @@ import java.net.URL;
 
 public final class JsonUtils {
 
-    public static JSONObject getJson(InputStream input) {
+    public static JsonObject getJson(InputStream input) {
         String jsonString = "";
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(input));
@@ -22,13 +21,13 @@ public final class JsonUtils {
             System.err.println(e);
         }
 
-        return new JSONObject(jsonString);
+        return new JsonObject(jsonString);
 
     }
 
-    public static JSONObject getJson(String url) {
+    public static JsonObject getJson(String url) {
 
-        JSONObject json = null;
+        JsonObject json = null;
 
         try {
 
@@ -48,7 +47,7 @@ public final class JsonUtils {
 
 
             json = getJson(site.openStream());
-            int metaResponseCode = json.getJSONObject("meta").getInt("status");
+            int metaResponseCode = json.getJsonObject("meta").getInt("status");
             if (metaResponseCode != 200) {
                 throw new ApiResponseException(metaResponseCode, site.openStream());
             }
@@ -61,13 +60,6 @@ public final class JsonUtils {
 
         return json;
 
-    }
-
-    public static boolean isEmpty(JSONArray array) {
-        for (Object o : array) {
-            return false;
-        }
-        return true;
     }
 
 }

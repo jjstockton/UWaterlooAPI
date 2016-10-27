@@ -10,7 +10,6 @@ import static org.junit.Assert.*;
 public class JsonTests {
 
 
-
     private static JsonObject testJson = new JsonObject(
             "{\"course_id\":\"007407\",\"subject\":\"PHYS\"," +
             "\"catalog_number\":\"234\",\"title\":\"Quantum Physics 1\",\"units\":0.5," +
@@ -71,6 +70,14 @@ public class JsonTests {
     @Test
     public void testNull() {
         assertNull(testJson.getString("crosslistings"));
+    }
+
+    @Test
+    public void testGetInt() {
+        JsonObject test = new JsonObject("{\"test_int\": 3}");
+
+        assertEquals(3, test.getInt("test_int").intValue());
+
     }
 
 

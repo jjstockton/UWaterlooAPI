@@ -35,6 +35,12 @@ public class IntegrationTests {
         assertEquals("graduate", c3.getAcademicLevel());
         assertNotNull(c3.getCalendarYear());
 
+        String[] instructions = {"LEC","TUT"};
+        assertArrayEquals(instructions, c1.getInstructions().toArray());
+
+        String[] termsOffered = {"W", "S"};
+        assertArrayEquals(termsOffered, c1.getTermsOffered().toArray());
+
     }
 
     @Test
