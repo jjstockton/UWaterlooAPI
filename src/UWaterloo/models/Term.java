@@ -1,15 +1,13 @@
 package UWaterloo.models;
 
+import UWaterloo.internal.json.JsonObject;
+
 public class Term extends UWaterlooObject {
     private String abbreviation;
     private String description;
 
-    public Term() {
-    }
-
-    protected Term(String abbreviation, String description) {
-        this.abbreviation = abbreviation;
-        this.description = description;
+    public Term(JsonObject data) {
+        super(data);
     }
 
     public String getAbbreviation() {

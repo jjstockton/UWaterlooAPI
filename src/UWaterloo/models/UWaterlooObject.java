@@ -1,39 +1,39 @@
 package UWaterloo.models;
 
-import java.lang.reflect.Field;
+import UWaterloo.internal.json.JsonObject;
 
-public class UWaterlooObject {
+import java.util.List;
 
-    protected Object getAttribute(String name) {
+public class UWaterlooObject extends JsonObject {
 
-        Field f = getField(name);
-        f.setAccessible(true);
-        Object rawValue = null;
-        try {
-            rawValue = f.get(this);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        if (rawValue == null) {
-            // Load value
-            return rawValue;
-        } else {
-            return rawValue;
-        }
+    public UWaterlooObject(JsonObject json) {
+        super(json.toString());
     }
 
-    private Field getField(String name) {
-        Class c = this.getClass();
-        do {
-            try {
-                return c.getDeclaredField(name);
-            } catch (NoSuchFieldException e) {
-                continue;
-            }
+    @Override
+    public <T> T get(String key, Class<T> type) {
 
-        } while ((c = c.getSuperclass()) != null);
+        T value = super.get(key, type);
 
-        throw new NoSuchFieldError();
+        if(value == null) {
+            System.out.println("Lazy load!!");
+            return value;
+        }
+
+        return value;
+    }
+
+    @Override
+    public <T> List<T> getList(String name, Class<T> type) {
+
+        List<T> value = super.getList(name, type);
+
+        if(value == null) {
+            System.out.println("Lazy load!!");
+            return value;
+        }
+
+        return value;
+
     }
 }

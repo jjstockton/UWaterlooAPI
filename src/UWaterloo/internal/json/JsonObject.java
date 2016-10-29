@@ -13,8 +13,16 @@ public class JsonObject extends UWaterlooJson {
         this.rawText = jsonText;
     }
 
+    public <T> T get(String key, Class<T> type) {
 
-    private String get(String key) {
+        if(type == String.class) {
+            return (T) getString(key);
+        }
+
+        return (T) getRaw(key);
+    }
+
+    public String getRaw(String key) {
 
         String regex = "\"" + key + "\":\\s*(\"(.*?)\"|[^,]+)";
         Pattern p = Pattern.compile(regex);
@@ -29,7 +37,7 @@ public class JsonObject extends UWaterlooJson {
     }
 
     public String getString(String key) {
-        String value = get(key);
+        String value = getRaw(key);
         if(value == null || value.equals("null")) {
             return null;
         }
@@ -38,18 +46,18 @@ public class JsonObject extends UWaterlooJson {
     }
 
     public Boolean getBoolean(String key) {
-        if(get(key) == null) {
+        if(getRaw(key) == null) {
             return null;
         }
-        return Boolean.valueOf(get(key));
+        return Boolean.valueOf(getRaw(key));
     }
 
     public Double getDouble(String key) {
-        return Double.valueOf(get(key));
+        return Double.valueOf(getRaw(key));
     }
 
     public Integer getInt(String key) {
-        return Integer.valueOf(get(key));
+        return Integer.valueOf(getRaw(key));
     }
 
 

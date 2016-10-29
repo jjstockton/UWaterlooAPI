@@ -6,135 +6,300 @@ import java.util.List;
 
 public class Course extends UWaterlooObject {
 
-    private JsonObject data;
-
-    public Course(JsonObject data) {
-        this.data = data;
-    }
-
-    public Course(String courseId) {
+    public Course(JsonObject json) {
+        super(json);
     }
 
     public String getCourseId() {
-        return data.getString("course_id");
+        return get("course_id", String.class);
     }
 
     public String getSubject() {
-        return data.getString("subject");
+        return get("subject", String.class);
     }
 
     public String getCatalogNumber() {
-        return data.getString("catalog_number");
+        return getString("catalog_number");
     }
 
     public String getTitle() {
-        return data.getString("title");
+        return getString("title");
     }
 
     public double getUnits() {
-        return data.getDouble("units");
+        return getDouble("units");
     }
 
     public String getDescription() {
-        return data.getString("description");
+        return getString("description");
     }
 
     public List<String> getInstructions() {
-        return data.getList("instructions", String.class);
+        return getList("instructions", String.class);
     }
 
     public String getPrerequisites() {
-        return data.getString("prerequisites");
+        return getString("prerequisites");
     }
 
     public String getCorequisites() {
-        return data.getString("corequisites");
+        return getString("corequisites");
     }
 
     public String getCrosslistings() {
-        return data.getString("cross_listings");
+        return getString("cross_listings");
     }
 
     public List<String> getTermsOffered() {
-        return data.getList("terms_offered", String.class);
+        return getList("terms_offered", String.class);
     }
 
     public String getNotes() {
-        return data.getString("notes");
+        return getString("notes");
     }
 
     public boolean isNeedsDepartmentConsent() {
-        return data.getBoolean("needs_department_consent");
+        return getBoolean("needs_department_consent");
     }
 
     public boolean isNeedsInstructorConsent() {
-        return data.getBoolean("needs_instructor_consent");
+        return getBoolean("needs_instructor_consent");
     }
 
     public String getAntirequisites() {
-        return data.getString("antirequisites");
+        return getString("antirequisites");
     }
 
     public Offerings getOfferings() {
-        return new Offerings(data.getJsonObject("offerings"));
+        return new Offerings(getJsonObject("offerings"));
     }
 
     public List<String> getExtra() {
-        return data.getList("extra", String.class);
+        return getList("extra", String.class);
     }
 
     public String getCalendarYear() {
-        return data.getString("calendar_year");
+        return getString("calendar_year");
     }
 
     public String getUrl() {
-        return data.getString("url");
+        return getString("url");
     }
 
     public String getAcademicLevel() {
-        return data.getString("academic_level");
+        return getString("academic_level");
+    }
+
+    public Schedule getSchedule() {
+        return get("schedule", Schedule.class);
     }
 
 
-    public class Offerings {
+    public class Offerings extends UWaterlooObject {
 
-        private JsonObject data;
         public Offerings(JsonObject data) {
-            this.data = data;
+            super(data);
         }
 
         public boolean isOnline() {
-            return data.getBoolean("online");
+            return getBoolean("online");
         }
 
         public boolean isOnlineOnly() {
-            return data.getBoolean("online_only");
+            return getBoolean("online_only");
         }
 
         public boolean isStJerome() {
-            return data.getBoolean("st_jerome");
+            return getBoolean("st_jerome");
         }
 
         public boolean isStJeromeOnly() {
-            return data.getBoolean("st_jerome_only");
+            return getBoolean("st_jerome_only");
         }
 
         public boolean isRenison() {
-            return data.getBoolean("renison");
+            return getBoolean("renison");
         }
 
         public boolean isRenisonOnly() {
-            return data.getBoolean("renison_only");
+            return getBoolean("renison_only");
         }
 
         public boolean isConradGrebel() {
-            return data.getBoolean("conrad_grebel");
+            return getBoolean("conrad_grebel");
         }
 
         public boolean isConradGrebelOnly() {
-            return data.getBoolean("conrad_grebel_only");
+            return getBoolean("conrad_grebel_only");
+        }
+    }
+
+    public class Schedule extends UWaterlooObject {
+
+        public Schedule(JsonObject json) {
+            super(json);
         }
 
+        public int getClassNumber() {
+            return get("class_number", Integer.class);
+        }
+
+        public String getSection() {
+            return get("section", String.class);
+        }
+
+        public String getCampus() {
+            return get("campus", String.class);
+        }
+
+        public int getAssociatedClass() {
+            return get("associated_class", Integer.class);
+        }
+
+        public String getRelatedComponent1() {
+            return get("related_component_1", String.class);
+        }
+
+        public List<Reserves> getReserves() {
+            return getList("campus", Reserves.class);
+        }
+
+        public List<Classes> getClasses() {
+            return getList("campus", Classes.class);
+        }
+
+        public String getRelatedComponent2() {
+            return get("related_component_2", String.class);
+        }
+
+        public int getEnrollmentCapacity() {
+            return get("enrollment_capacity", Integer.class);
+        }
+
+        public int getEnrollmentTotal() {
+            return get("enrollmentTotal", Integer.class);
+        }
+
+        public int getWaitingCapacity() {
+            return get("waiting_capacity", Integer.class);
+        }
+
+        public int getWaitingTotal() {
+            return get("waiting_total", Integer.class);
+        }
+
+        public String getTopic() {
+            return get("topic", String.class);
+        }
+
+        public List<String> getHeldWith() {
+            return getList("campus", String.class);
+        }
+
+        public int getTerm() {
+            return get("term", Integer.class);
+        }
+
+        public String getLastUpdated() {
+            return get("last_updated", String.class);
+        }
+
+        public class Reserves extends UWaterlooObject {
+            private String reserveGroup;
+            private int enrollmentCapacity;
+            private int enrollmentTotal;
+
+            public Reserves(JsonObject data) {
+                super(data);
+            }
+
+            public String getReserveGroup() {
+                return get("reserve_group", String.class);
+            }
+
+            public int getEnrollmentCapacity() {
+                return get("enrollment_capacity", Integer.class);
+            }
+
+            public int getEnrollmentTotal() {
+                return get("enrollment_total", Integer.class);
+            }
+        }
+
+        public class Classes extends UWaterlooObject {
+
+            public Classes(JsonObject data) {
+                super(data);
+            }
+
+            public Date getDate() {
+                return get("date", Date.class);
+            }
+
+            public Location getLocation() {
+                return get("location", Location.class);
+            }
+
+            public List<String> getInstructors() {
+                return getList("instructors", String.class);
+            }
+
+            public class Date extends UWaterlooObject {
+
+                public Date(JsonObject data) {
+                    super(data);
+                }
+
+                public String getStartTime() {
+                    return get("start_time", String.class);
+                }
+
+                public String getEndTime() {
+                    return get("end_time", String.class);
+                }
+
+
+                public String getWeekdays() {
+                    return get("weekdays", String.class);
+                }
+
+                public String getStartDate() {
+                    return get("start_date", String.class);
+                }
+
+                public String getEndDate() {
+                    return get("end_date", String.class);
+                }
+
+                public boolean isTba() {
+                    return get("is_tba", Boolean.class);
+                }
+
+                public boolean isCancelled() {
+                    return get("is_cancelled", Boolean.class);
+                }
+
+                public boolean isClosed() {
+                    return get("is_closed", Boolean.class);
+                }
+            }
+
+            public class Location extends UWaterlooObject {
+
+                public Location(JsonObject data) {
+                    super(data);
+                }
+
+                public String getBuilding() {
+                    return get("campus", String.class);
+                }
+
+                public String getRoom() {
+                    return get("room", String.class);
+                }
+
+            }
+        }
     }
 }
 

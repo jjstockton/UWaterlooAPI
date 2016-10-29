@@ -7,13 +7,15 @@ import UWaterloo.models.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static UWaterloo.internal.utils.JsonUtils.getJson;
 
-enum Endpoint {
+public enum Endpoint {
 
     // Food Services
     FOODSERVICES_MENU("/foodservices/menu", Object.class),
@@ -138,6 +140,9 @@ enum Endpoint {
     API_VERSIONS("/api/versions", Object.class),
     API_CHANGELOGS("/api/changelogs", Object.class);
 
+    private static final Map<Class<?>, Endpoint> defaultEndpoints = new HashMap<Class<?>, Endpoint>() {{
+        put(Course.class, COURSES_SUBJECT_CATALOGNUMBER);
+    }};
 
     private static final String BASE_URL = "https://api.uwaterloo.ca/v2";
     private final String url;

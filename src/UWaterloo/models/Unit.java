@@ -1,5 +1,7 @@
 package UWaterloo.models;
 
+import UWaterloo.internal.json.JsonObject;
+
 public class Unit extends UWaterlooObject {
 
     private String unitCode;
@@ -7,7 +9,8 @@ public class Unit extends UWaterlooObject {
     private String unitShortName;
     private String unitFullName;
 
-    public Unit() {
+    public Unit(JsonObject data) {
+        super(data);
     }
 
     public String getUnitCode() {
